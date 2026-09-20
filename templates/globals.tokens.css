@@ -1,0 +1,34 @@
+/* Дизайн-формула команды Lomra (снята с edu.astanahub.com, «Vercel/Linear look»).
+   Вставить в app/globals.css вместо блока :root, который сгенерировал shadcn init.
+   Блок @theme inline и импорты tailwind оставить как есть. Тёмная тема не нужна. */
+
+:root {
+  --radius: 0.5rem;
+  --background: #f2f2f2;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #e8e8e8;
+  --secondary-foreground: #000000;
+  --muted: #e8e8e8;
+  --muted-foreground: #7a7a7a;
+  --accent: #e8e8e8;
+  --accent-foreground: #000000;
+  --destructive: #b42318;
+  --border: #d1d1d1;
+  --input: #d1d1d1;
+  --ring: #000000;
+}
+
+/* Шрифт: в app/layout.tsx подключить Golos_Text из next/font/google с variable: '--font-golos'
+   и повесить className на <html>. */
+body {
+  font-family: var(--font-golos), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Крупные контейнеры: className="rounded-[28px]". Заголовки: className="tracking-tight". */

@@ -1,0 +1,9 @@
+# ~/.codex/config.toml для ноутбука.
+# Имена ключей проверить на репетиции: запусти `codex` и убедись, что конфиг принят без предупреждений.
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+approval_policy = "on-failure"
+sandbox_mode = "workspace-write"
+
+[profiles.agent]
+model_reasoning_effort = "high"
