@@ -15,4 +15,5 @@ description: 10-minute security and reliability pass before submission, mapped t
 8. Dependencies: `pnpm audit --prod` shows no critical; lockfile committed; no packages outside AGENTS.md.
 9. Code hygiene: no `eval`, `new Function`, `child_process`, `dangerouslySetInnerHTML`, no fetch to hosts other than OpenAI, NVIDIA, Turso, Telegram.
 10. Imitation check: `git grep -nE "R-[0-9]{4}|id === "` -- lib app` returns nothing; record ids live only in data/ and tests/. `git status --short` shows no .env* file.
-11. Write the results as bullet points into README section "Базовая надёжность и безопасность".
+11. Cleanliness: no leftover scaffold files (default Next page text, unused components/ui files, sample assets), no TODO without a README limitation line, no stray console.log. Delete, do not comment out.
+12. Write the results as bullet points into README section "Базовая надёжность и безопасность".
