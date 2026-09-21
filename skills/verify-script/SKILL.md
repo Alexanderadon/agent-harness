@@ -21,3 +21,5 @@ package.json scripts:
 - "test": "vitest run"
 
 README gets the exact output of one successful `pnpm verify` run pasted into a code block.
+
+Clean-checkout test (block 10): `git clone <repo> ../fresh && cd ../fresh && corepack enable && pnpm i --frozen-lockfile && pnpm typecheck && pnpm test && pnpm dev`. Open localhost, see the seeded table without running anything else. If any step needs a manual action, fix the code, not the README.

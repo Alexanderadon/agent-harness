@@ -4,6 +4,7 @@
 Проверять по списку, отмечать галочками, а не по памяти.
 
 ## Инструменты
+- [ ] Часы ноутбука синхронизированы с сетью, часовой пояс Астана: коммиты с неверным временем выглядят как работа до старта.
 - [ ] Node 22 LTS и pnpm 10: `node -v`, `pnpm -v`.
 - [ ] Git с настроенным именем и почтой: `git config --global user.name "Alexander Kurchakov"`, `git config --global user.email "fistin103@gmail.com"`.
 - [ ] Доступ к GitHub с ноутбука: `git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra` проходит (клон читать, ничего не пушить до старта).

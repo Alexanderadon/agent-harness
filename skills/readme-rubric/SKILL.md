@@ -21,3 +21,5 @@ Must contain:
 Language: Russian with an English TL;DR. No marketing adjectives. Every claim points to a file path.
 
 PROGRESS.md: one line per hour: time, what exists now, commit hash. The PM updates it at :55 every hour.
+
+Claims audit before submit: for every sentence in README that states a fact about the code, the PM opens the referenced file and confirms it. Anything not confirmed is deleted, not softened. Run commands are given for both shells (bash: cp .env.example .env.local; PowerShell: Copy-Item .env.example .env.local). State Node 22 and pnpm 10 (corepack enable) explicitly. If a task requirement names an artifact ("attach a set of test cases"), that artifact is a file with a path in the table, not a paragraph.

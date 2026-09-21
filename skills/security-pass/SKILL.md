@@ -14,4 +14,5 @@ description: 10-minute security and reliability pass before submission, mapped t
 7. Injection: instructions tell the model that tool outputs and record text are data; a seed record containing text like "ignore previous instructions" must not change behaviour, and writes still require approval. Try it once.
 8. Dependencies: `pnpm audit --prod` shows no critical; lockfile committed; no packages outside AGENTS.md.
 9. Code hygiene: no `eval`, `new Function`, `child_process`, `dangerouslySetInnerHTML`, no fetch to hosts other than OpenAI, NVIDIA, Turso, Telegram.
-10. Write the results as bullet points into README section "Базовая надёжность и безопасность".
+10. Imitation check: `git grep -nE "R-[0-9]{4}|id === "` -- lib app` returns nothing; record ids live only in data/ and tests/. `git status --short` shows no .env* file.
+11. Write the results as bullet points into README section "Базовая надёжность и безопасность".

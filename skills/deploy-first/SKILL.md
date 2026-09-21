@@ -33,3 +33,6 @@ lib/db.ts picks TURSO_DATABASE_URL when present, otherwise file:data/app.db, and
 Smoke after every deploy: open the URL on the phone, press Reset demo, run the scenario, approve, watch the table change. Paste the URL into README only after the smoke passes.
 
 Env matrix: key A in Vercel production; key B as OPENAI_API_KEY_FALLBACK in .env.local only. Hard limit $40 for the day in the OpenAI dashboard.
+
+Deployment Protection: in the Vercel project settings turn off "Vercel Authentication" for production, then open the URL in an incognito window on the phone. A login wall means "does not open" for a judge.
+Why the live URL matters: a judge without an OpenAI key can only run the main scenario on the deployed version. Blocks 2 and 7 are therefore not optional.
