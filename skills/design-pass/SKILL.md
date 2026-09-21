@@ -15,3 +15,11 @@ description: 15-minute visual pass that makes a shadcn default UI look like a fi
 8. Screenshot for README after this pass.
 
 Stop after 15 minutes even if something is imperfect.
+
+## Markup corrector (do this before step 1, 5 minutes)
+Open the rendered HTML (view-source or the inspector) and fix what a front-end reviewer would flag first:
+- Every card is a `section` with an `h2`; the page has one `h1`, a `header`, a `main` and an `aside` for the agent panel.
+- Record lists are `ul/li`, never stacked divs; the data table has `caption`, `thead`, `th scope="col"`, numeric cells `text-right tabular-nums`, units in the header, no clipped columns at 1280px (hide or abbreviate secondary columns with `hidden lg:table-cell`).
+- The agent trace is an `ol` of steps; each Approve/Reject is a real `button` with an accessible name.
+- Every input has a `label` (`htmlFor`), status badges have text, not colour only; focus rings visible.
+- Run `pnpm dlx @axe-core/cli http://localhost:3000` only if it takes under two minutes; otherwise skip, the checklist above is the gate.
