@@ -6,7 +6,7 @@ description: Day-of protocol for a 5-hour hackathon build. Turns one-word user c
 # Hackathon day protocol (Alexander's agent, code owner)
 
 The user sends short commands. Each one means the full procedure below. Never ask the user to restate what a command means.
-Before every command: `git pull --rebase --autostash origin main`, then read TASKS.md and the last lines of PROGRESS.md to learn what the teammate's agent did. Never `git push --force`.
+Before every command: `git pull --rebase --autostash origin main`, then read TASKS.md and the last lines of PROGRESS.md to learn what the teammate's agent did. Never `git push --force`. You own rows 0–10 of TASKS.md and the "contract" section; rows starting with Э and the "requests" answers belong to the captain. Git author strings: you are `Alexander Kurchakov`, the captain is her `git config user.name`.
 
 ## "Я Александр" (first message of the day, role switch)
 Reply in four lines: "Роль: код, ноутбук Александра." Then `git config user.name` and `user.email` (must be Alexander Kurchakov / fistin103@gmail.com; if not, say so and stop). Then `git pull --rebase --autostash origin main` and the current branch. Then the list of your commands: scaffold, spec, старт, го, блок N, чекпоинт, ревью, стоп. Do nothing else until the next command. If someone sends captain commands (task, progress, readme, testdata, audit, submit) on this laptop, answer that these belong to the captain's laptop and do not run them.
