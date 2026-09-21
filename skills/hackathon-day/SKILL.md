@@ -1,6 +1,6 @@
 ---
 name: hackathon-day
-description: Day-of protocol for a 5-hour hackathon build. Turns one-word user commands (spec, старт, го, блок N, чекпоинт, стоп) into the full procedure - draft SPEC from the task, restate the plan, work strictly block by block from TASKS.md with commits and five-line reports, hourly wip checkpoints, git sync with the teammate's agent. Use in a repo that has AGENTS.md, docs/TASK.md and TASKS.md whenever the user sends one of these commands.
+description: Day-of protocol for a 5-hour hackathon build. Turns one-word user commands (spec, старт, го, блок N, чекпоинт, ревью, стоп) into the full procedure - draft SPEC from the task, restate the plan, work strictly block by block from TASKS.md with commits and five-line reports, parallel subagents for disjoint files, a read-only compliance review, hourly push-what-exists checkpoints, git sync with the teammate's agent. Use in a repo that has AGENTS.md, docs/TASK.md and TASKS.md whenever the user sends one of these commands.
 ---
 
 # Hackathon day protocol (Alexander's agent, code owner)
@@ -25,14 +25,19 @@ Begin block 1 from TASKS.md (or the block the user named). Same rules as "бло
 
 ## "блок N" (optionally with a timebox in minutes)
 Mark block N in TASKS.md as "🔄 А", commit. Work only block N. Use the skill named in the block (scaffold, ai-sdk-agent, agent-console, verify-script, deploy-first, design-pass, security-pass).
+Parallel work inside a block is allowed only on disjoint files and only through subagents you spawn yourself: in block 1 a subagent may write data/seed.json while you write lib/db.ts; in block 6 a subagent may write tests/tools.test.ts while you write scripts/verify.ts. At most two subagents at a time, each told exactly which files it owns; you merge nothing by hand, they write different files. If the harness has no subagents, work sequentially.
 Done means: the block criterion is met, `pnpm typecheck` is green, one commit with a one-line message, TASKS.md block marked "✅", push.
 Then report in five lines: done, verified by hand (what was clicked or run), not done, risks, next block. Do not start the next block.
 If the timebox runs out, stop, commit what works, report honestly.
 Machine outputs meant for the README go to docs/verify.log and docs/test.log; README.md and PROGRESS.md are never edited by this agent.
 
-## "чекпоинт"
-Commit the current state as "wip: <what exists>". `pnpm typecheck` must pass; if it does not, comment out the breaking part and mark TODO.
-Check `git status --short`: no .env* files may be staged. Push. Print `git log --since="70 minutes ago" --format="%an: %s"` so the user sees both authors' work. Continue the current block.
+## "чекпоинт" (every hour at :50–:55, or whenever the user says so)
+Push what exists. Never delete, revert or stash work to make a checkpoint look clean: an hour of work that is not in the remote does not exist for the organizers (Положение 6.6).
+Steps: `git add -A` (check `git status --short`: no .env* files, no data/app.db), commit "wip: <what exists, one line>"; if `pnpm typecheck` fails, still commit, with the message "wip (typecheck failing: <reason>)", and fix it in the next 15 minutes. Push. Print `git log --since="70 minutes ago" --format="%an: %s"`. Continue the current block from the same place.
+The manual deploy is the user's job and only when typecheck is green; remind them in one line if it is.
+
+## "ревью" (compliance review, read-only; run at the end of block 4 and at the start of block 10)
+Spawn a read-only subagent (or do it yourself without editing) that reads docs/TASK.md, SPEC.md, AGENTS.md and the code, and returns a numbered list of violations in this order: (1) mandatory requirements from docs/TASK.md not fully implemented or not verifiable by hand; (2) AGENTS.md rules broken: hardcoded record ids in lib/ or app/, write tool without toolApproval, API input without zod, canned model output, README or PROGRESS edited, library outside the list, leftover scaffold files; (3) README claims that the code does not back (compare README.md to files). Each item: file path, what is wrong, the smallest fix. Nothing is edited by the review. Then fix items of group 1 and 2 in one commit; hand group 3 to the PM via TASKS.md requests.
 
 ## "стоп"
 Discard uncommitted changes outside the current block, return to the current block and its criterion, confirm in one line.
