@@ -19,4 +19,4 @@ Copy-Item (Join-Path $here "codex\config.toml") $cfg -Force
 Write-Host "codex config: $cfg"
 
 Write-Host ""
-Write-Host "Дальше руками после старта: скопировать AGENTS.md, CLAUDE.md и templates/* в репозиторий проекта."
+Write-Host "Дальше в день старта: сообщение -1 из templates/KICKOFF-PROMPT.md (скаффолд + перенос комплекта делает агент)."

@@ -1,20 +1,24 @@
 # Что отправлять агенту в день хакатона
 
-Контекст агента это файлы репозитория, а не память чата. Перед первым сообщением в репозитории уже лежат:
-`AGENTS.md`, `CLAUDE.md`, `docs/TASK.md` (условие дословно), `SPEC.md`, `TASKS.md`, `.env.example`. Скиллы установлены через install.ps1.
+Контекст агента это файлы репозитория, а не память чата. Все сообщения ниже копируются как есть, в фигурных скобках то, что подставляешь ты.
 
-## −1. Перенос комплекта в репозиторий команды (0:02, одна команда агенту или руками)
+## −1. Скаффолд и перенос комплекта (0:00, сразу после старта, одно сообщение)
+
+Порядок важен: create-next-app отказывается работать в папке, где лежат неизвестные ему файлы, поэтому сначала скаффолд, потом комплект.
 
 ```
-Склонируй https://github.com/Alexanderadon/agent-harness во временную папку рядом, скопируй в корень этого репозитория AGENTS.md и CLAUDE.md,
-templates/TASKS.template.md как TASKS.md, templates/env.example как .env.example; создай папку docs и положи туда
-playbooks/hackalem-2026/WINNING-SHAPE.md и templates/SPEC.template.md. Временную папку удали.
-Закоммить одной строкой «conventions (disclosed)» и запушь. Больше ничего не делай.
+Используй скилл scaffold: создай Next.js 16 проект в этом репозитории через временную папку, shadcn init, компоненты, зависимости, .nvmrc, engines,
+onlyBuiltDependencies и скрипты из скилла. Затем склонируй https://github.com/Alexanderadon/agent-harness во временную папку рядом и скопируй
+в корень репозитория AGENTS.md и CLAUDE.md, templates/TASKS.template.md как TASKS.md, templates/env.example как .env.example,
+templates/PROGRESS.template.md как PROGRESS.md; создай папку docs и положи туда playbooks/hackalem-2026/WINNING-SHAPE.md,
+templates/SPEC.template.md и templates/README.template.md. Временные папки удали. pnpm typecheck должен пройти.
+Закоммить одной строкой «scaffold + conventions (disclosed)» и запушь. Больше ничего не делай.
 ```
 
 Ссылка здесь работает как адрес для git clone, а не как контекст: агент не читает страницы GitHub, он читает файлы в репозитории.
+Пока это выполняется (3–5 минут), Эмина читает задачи и кладёт условие в docs/TASK.md.
 
-## 0. Черновик SPEC силами агента (0:05, сразу после того, как условие лежит в docs/TASK.md)
+## 0. Черновик SPEC силами агента (0:05, когда условие лежит в docs/TASK.md)
 
 ```
 Прочитай AGENTS.md, docs/WINNING-SHAPE.md, docs/TASK.md и docs/SPEC.template.md.
@@ -24,9 +28,9 @@ playbooks/hackalem-2026/WINNING-SHAPE.md и templates/SPEC.template.md. Врем
 Если задача требует библиотеку вне списка AGENTS.md, назови её и зачем, но не добавляй. Код не пиши.
 ```
 
-Ты читаешь SPEC.md две минуты, правишь руками, что не так, и только потом отправляешь сообщение 1.
+Ты читаешь SPEC.md две минуты, правишь руками, что не так, Эмина сверяет таблицу требований с условием. Только потом сообщение 1.
 
-## 1. Первое сообщение в Claude Code (0:15, после SPEC.md)
+## 1. Старт разработки (0:15, после SPEC.md)
 
 ```
 Ты ведёшь разработку проекта на хакатоне HackAlem AI. Лимит 5 часов, сейчас 0:15, репозиторий закроется автоматически в 5:00.
@@ -52,7 +56,7 @@ playbooks/hackalem-2026/WINNING-SHAPE.md и templates/SPEC.template.md. Врем
 
 ```
 Сейчас :55. Закоммить текущее состояние как «wip: {{что есть}}», pnpm typecheck должен проходить, если не проходит, закомментируй
-ломающее и отметь TODO. Пуш. Потом продолжай блок {{N}} с того же места.
+ломающее и отметь TODO. Проверь git status: файлов .env* в коммите быть не должно. Пуш. Потом продолжай блок {{N}} с того же места.
 ```
 
 ## 3. Если агент ушёл в сторону
@@ -61,15 +65,16 @@ playbooks/hackalem-2026/WINNING-SHAPE.md и templates/SPEC.template.md. Врем
 Стоп. Это не в TASKS.md. Откати незакоммиченное, вернись к блоку {{N}}, критерий: {{…}}.
 ```
 
-## 4. Codex на параллельные задачи (второй терминал, отдельный git worktree, или ноутбук Эмины на клоне)
+## 4. Codex на параллельные задачи (второй терминал в отдельном git worktree, или ноутбук Эмины на клоне)
 
 ```
 Read AGENTS.md and SPEC.md. Task: generate data/seed.json with {{N}} realistic Kazakhstan records for the entity in SPEC.md,
-exactly {{k}} of them in the problem state described in the scenario. Do not touch any other file. Run pnpm seed. Commit on branch seed.
+exactly {{k}} of them in the problem state described in the scenario; dates relative (days_ago). Do not touch any other file.
+Run pnpm seed. Commit on branch seed.
 ```
 
 ```
-Read AGENTS.md, SPEC.md and templates/README.template.md. Task: draft README.md filling every section from the current code,
+Read AGENTS.md, SPEC.md and docs/README.template.md. Task: draft README.md filling every section from the current code,
 leave {{…}} placeholders where you are not sure. Do not touch code. Commit on branch docs.
 ```
 

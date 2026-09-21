@@ -19,7 +19,7 @@ vercel --prod --yes
 
 The route with the agent exports `export const maxDuration = 60;`.
 
-Turso for the deployed db (local stays file:data/app.db):
+Turso for the deployed db (local stays file:data/app.db). On Windows without WSL there is no Turso CLI: create the database in the web dashboard app.turso.tech (Create Database, copy URL, Generate Token). With the CLI:
 
 ```bash
 turso auth login

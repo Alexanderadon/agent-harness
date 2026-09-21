@@ -8,10 +8,10 @@
 - [ ] Node 22 LTS и pnpm 10: `node -v`, `pnpm -v`.
 - [ ] Git с настроенным именем и почтой: `git config --global user.name "Alexander Kurchakov"`, `git config --global user.email "fistin103@gmail.com"`.
 - [ ] Доступ к GitHub с ноутбука: `git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra` проходит (клон читать, ничего не пушить до старта).
-- [ ] Claude Code установлен и залогинен в аккаунт с Max: `claude` открывается, `/skills` показывает скиллы из этого репозитория после `install.ps1`.
+- [ ] Claude Code установлен и залогинен в аккаунт с Max: `claude` открывается, после `install.ps1` набор `/` показывает в списке ai-sdk-agent, scaffold и остальные скиллы.
 - [ ] Codex установлен, `codex` запускается; логин в свой аккаунт сейчас, в перк-аккаунт в 12:30 23.09.
 - [ ] Vercel CLI: `vercel whoami` показывает fistin103.
-- [ ] Turso CLI: `turso auth status` залогинен, одна тестовая база создана и удалена.
+- [ ] Turso: аккаунт через GitHub на app.turso.tech, база создана в веб-дашборде (CLI на Windows нет), URL и токен в менеджере паролей.
 - [ ] LAN-переходник USB-A → RJ-45 проверен с кабелем, Wi-Fi 5 ГГц виден, хотспот с телефона проверен как третий канал.
 - [ ] Vercel-проект создан пустым, env вбиты; Turso-база создана; `pnpm store` прогрет репетицией на этом же ноутбуке.
 

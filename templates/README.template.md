@@ -20,7 +20,7 @@
 
 ```mermaid
 flowchart LR
-  UI[Next.js UI: таблица + панель агента] -->|POST /api/agent| API[Route handler]
+  UI[Next.js UI: таблица + панель агента] -->|POST /api/chat| API[Route handler]
   API --> AGENT[ToolLoopAgent, AI SDK v7]
   AGENT -->|read tools| DB[(libSQL: {{таблицы}})]
   AGENT -->|write tools, после Approve| DB
