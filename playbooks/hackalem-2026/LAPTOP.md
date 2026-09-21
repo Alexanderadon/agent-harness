@@ -5,7 +5,7 @@
 ## Программы, по порядку установки
 - [ ] **Node.js 22 LTS** с nodejs.org. Проверка: `node -v` показывает 22.
 - [ ] **pnpm 10**: `corepack enable`, затем `corepack prepare pnpm@latest --activate`. Проверка: `pnpm -v` показывает 10.
-- [ ] **Git for Windows** с gitforwindows.org, вместе с Git Credential Manager (он в установщике по умолчанию).
+- [ ] **Git for Windows** с gitforwindows.org, вместе с Git Credential Manager (он в установщике по умолчанию). Репозиторий команды клонировать в путь без кириллицы и пробелов, например C:hack.
   `git config --global user.name "Alexander Kurchakov"`, `git config --global user.email "fistin103@gmail.com"`.
 - [ ] **Claude** (десктоп-приложение с вкладкой Code) с claude.ai/download, вход в аккаунт с Max. Это основной инструмент.
 - [ ] **Codex CLI**: `npm i -g @openai/codex`. Проверка: `codex --version`. Вход в свой аккаунт сейчас, в перк-аккаунт в 12:30 23.09.

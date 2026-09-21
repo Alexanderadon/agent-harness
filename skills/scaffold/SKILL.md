@@ -30,6 +30,12 @@ pnpm add -D vitest tsx @types/node
 echo 22 > .nvmrc
 ```
 
+Repo hygiene (do it now, not later):
+- `.gitattributes` with one line `* text=auto eol=lf`, then `git add --renormalize .` (two Windows laptops otherwise fight over CRLF).
+- `next.config.ts`: `serverExternalPackages: ['@libsql/client', 'libsql']` so Turbopack leaves native bindings alone.
+- Never start `pnpm dev` in the foreground of this agent: it never returns. Verify with `pnpm build`, or start dev in the background and curl it.
+- On Windows the agent shell is PowerShell: use Remove-Item -Recurse -Force, Copy-Item -Recurse, Move-Item instead of rm/cp/mv.
+
 package.json: `"engines": { "node": ">=22" }`, `"pnpm": { "onlyBuiltDependencies": ["@libsql/client", "libsql", "esbuild", "sharp"] }`,
 scripts `"typecheck": "tsc --noEmit"`, `"test": "vitest run"`, `"seed": "tsx scripts/seed.ts"`, `"verify": "tsx scripts/verify.ts"`, `"smoke": "pnpm typecheck && pnpm test && pnpm seed"`.
 

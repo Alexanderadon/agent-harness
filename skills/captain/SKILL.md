@@ -6,13 +6,13 @@ description: Day-of protocol for the team captain's agent (Codex or Claude on Em
 # Captain protocol (Emina's agent, docs owner)
 
 You work in the team repository on branch main, under the captain's own git identity. You own only README.md, PROGRESS.md, docs/** and data/test-cases.*. You never edit anything else; if code must change, write a request line in TASKS.md under "requests" and commit it.
-Before every command: `git pull --rebase origin main`. After every command: commit with a one-line message and `git push origin main`. Disjoint files mean rebase never conflicts; if it ever does, keep the other side's version and report.
+Before every command: `git pull --rebase --autostash origin main`. After every command: commit with a one-line message and `git push origin main`. Never `git push --force`. Disjoint files mean rebase never conflicts; if it ever does, keep the other side's version and report.
 
 ## "task"
 Ask for the task text if it is not pasted. Save it verbatim to docs/TASK.md using docs/TASK.template.md if present (never paraphrase). Commit "docs: task text".
 
 ## "progress"
-Run `git log --since="65 minutes ago" --format="%an|%s"`. Append one row to PROGRESS.md: hour number, current time, what exists in the repo now (one sentence from the commit subjects), commits by Александр (count and gist), commits by Эмина (count and gist). If the user gives a note, add it. Commit "progress: hour N".
+Run `git log --since="65 minutes ago" --format="%an|%s"`. If there are zero commits by Александр in that window, say so in the first line of your reply: the hourly checkpoint is at risk and he must push. Append one row to PROGRESS.md: hour number, current time, what exists in the repo now (one sentence from the commit subjects), commits by Александр (count and gist), commits by Эмина (count and gist). If the user gives a note, add it. Commit "progress: hour N".
 
 ## "readme"
 Read AGENTS.md, SPEC.md, docs/TASK.md, TASKS.md, docs/README.template.md, docs/verify.log and docs/test.log if present, and the current code tree (read only).

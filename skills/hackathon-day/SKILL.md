@@ -6,7 +6,7 @@ description: Day-of protocol for a 5-hour hackathon build. Turns one-word user c
 # Hackathon day protocol (Alexander's agent, code owner)
 
 The user sends short commands. Each one means the full procedure below. Never ask the user to restate what a command means.
-Before every command: `git pull --rebase origin main`, then read TASKS.md and the last lines of PROGRESS.md to learn what the teammate's agent did.
+Before every command: `git pull --rebase --autostash origin main`, then read TASKS.md and the last lines of PROGRESS.md to learn what the teammate's agent did. Never `git push --force`.
 
 ## "spec"
 Read AGENTS.md, docs/WINNING-SHAPE.md, docs/TASK.md and docs/SPEC.template.md.
