@@ -1,0 +1,12 @@
+# docker compose up --build  →  http://localhost:3000
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    volumes:
+      - app-data:/app/data
+volumes:
+  app-data:

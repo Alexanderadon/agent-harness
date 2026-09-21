@@ -24,3 +24,6 @@ Set-Location $env:TEMP
 Remove-Item -Recurse -Force $tmp
 Write-Host ""
 Write-Host "Прогрев прошёл: все пакеты в кэше pnpm, скаффолд и сборка работают."
+
+# Необязательно: если Docker Desktop установлен, проверить сборку образа по шаблону (ещё 3–5 минут).
+# Скопировать templates/Dockerfile в тестовый проект, добавить output: "standalone" в next.config, затем: docker build -t prewarm-test .

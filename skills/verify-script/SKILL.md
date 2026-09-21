@@ -23,3 +23,5 @@ package.json scripts:
 README gets the exact output of one successful `pnpm verify` run pasted into a code block.
 
 Clean-checkout test (block 10): `git clone <repo> ../fresh && cd ../fresh && corepack enable && pnpm i --frozen-lockfile && pnpm typecheck && pnpm test && pnpm dev`. Open localhost, see the seeded table without running anything else. If any step needs a manual action, fix the code, not the README.
+
+Optional Docker path (block 10, only if docker build was proven in rehearsal): copy templates/Dockerfile and compose.yaml from agent-harness, set `output: "standalone"` in next.config, run `docker compose up --build`, open localhost:3000, see the seeded table. Add the two commands to README under "Запуск" as an alternative. If the build fails, remove both files rather than leaving them.
