@@ -8,6 +8,9 @@ description: Day-of protocol for a 5-hour hackathon build. Turns one-word user c
 The user sends short commands. Each one means the full procedure below. Never ask the user to restate what a command means.
 Before every command: `git pull --rebase --autostash origin main`, then read TASKS.md and the last lines of PROGRESS.md to learn what the teammate's agent did. Never `git push --force`.
 
+## "Я Александр" (first message of the day, role switch)
+Reply in four lines: "Роль: код, ноутбук Александра." Then `git config user.name` and `user.email` (must be Alexander Kurchakov / fistin103@gmail.com; if not, say so and stop). Then `git pull --rebase --autostash origin main` and the current branch. Then the list of your commands: scaffold, spec, старт, го, блок N, чекпоинт, ревью, стоп. Do nothing else until the next command. If someone sends captain commands (task, progress, readme, testdata, audit, submit) on this laptop, answer that these belong to the captain's laptop and do not run them.
+
 ## "spec"
 Read AGENTS.md, docs/WINNING-SHAPE.md, docs/TASK.md and docs/SPEC.template.md.
 Write SPEC.md following the template for this task: one entity, two read tools, one or two write tools, a six-step scenario, the expected state for verify, a "Не делаем" section.

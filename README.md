@@ -32,8 +32,11 @@
 ```powershell
 git clone https://github.com/Alexanderadon/agent-harness
 cd agent-harness
-.\install.ps1
+.\install.ps1 -Role alexander    # ноутбук разработчика
+.\install.ps1 -Role emina        # ноутбук капитана
 ```
+
+Параметр Role записывает роль ноутбука в `~/.claude/CLAUDE.md` и `~/.codex/AGENTS.md`. В день первое сообщение агенту это имя: `Я Александр` или `Я Эмина`, агент подтверждает роль, проверяет git-имя и показывает свои команды.
 
 В репозиторий проекта копируются `AGENTS.md`, `CLAUDE.md` и нужные шаблоны из `templates/` (см. `templates/KICKOFF-PROMPT.md`, шаг −1).
 

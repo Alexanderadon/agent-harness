@@ -20,7 +20,7 @@
 Docker, Python, Ollama, Blender, Figma, GUI для баз данных, любые линтеры сверх того, что даёт create-next-app. Ничего из этого не нужно и всё это ест время. Путь запуска у судьи один: `pnpm install`, `pnpm dev`, без образов и альтернатив.
 
 ## Комплект и зависимости
-- [ ] `git clone https://github.com/Alexanderadon/agent-harness`, в папке `.\install.ps1`. Проверка: в Claude Code набрать `/` и увидеть scaffold, hackathon-day, ai-sdk-agent.
+- [ ] `git clone https://github.com/Alexanderadon/agent-harness`, в папке `.\install.ps1 -Role alexander` (у Эмины `-Role emina`). Проверка: в Claude Code набрать `/` и увидеть scaffold, hackathon-day, ai-sdk-agent; написать агенту `Я Александр` и получить четыре строки с ролью и командами.
 - [ ] `.\prewarm.ps1` из той же папки: ставит в кэш pnpm все пакеты дня (Next.js 16, shadcn, ai, @ai-sdk/*, zod, @libsql/client, lucide, vitest, tsx) и проверяет, что скаффолд и сборка проходят. Идёт 5–10 минут, папку после себя удаляет. В день установка пойдёт из кэша за секунды.
 
 ## Аккаунты и ключи
