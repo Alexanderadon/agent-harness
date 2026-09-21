@@ -2,6 +2,7 @@
 
 Stack: Next.js 16 App Router, TypeScript strict, Tailwind v4, shadcn/ui, lucide-react, Vercel AI SDK v7 (ai, @ai-sdk/openai, @ai-sdk/react), zod, @libsql/client, vitest, pnpm. Deploy: Vercel.
 Layout: app/ (routes, app/api), components/ (features), components/ui/ (shadcn only), lib/ (db, tools, agent, types), data/ (schema.sql, seed.json), scripts/ (seed, verify), tests/.
+Sources of truth: docs/TASK.md (verbatim task text, never edited), SPEC.md (what we build), TASKS.md (block checklist, one block at a time). Read all three before any code.
 Contract: lib/types.ts is the single shared contract. Change it only with a note in TASKS.md.
 Data: @libsql/client. Local: file:data/app.db, created and seeded on first run. Deployed: Turso via TURSO_DATABASE_URL + TURSO_AUTH_TOKEN. Same client, same SQL. POST /api/reset restores the seed.
 Agent: ToolLoopAgent (or streamText) from 'ai' with tool() + zod inputSchema, stopWhen: isStepCount(6). Read tools execute freely. Write tools require approval via toolApproval: { <name>: 'user-approval' }; the UI renders approval cards. Every step is visible in <AgentTrace/>.
