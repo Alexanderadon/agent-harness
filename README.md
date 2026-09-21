@@ -19,7 +19,7 @@
   - `deploy-first` — Vercel через CLI, Turso, смоук с телефона.
   - `design-pass` — 15-минутный визуальный проход по фиксированной формуле.
   - `security-pass` — 10-минутная проверка безопасности и надёжности перед сдачей.
-- `templates/` — README, SPEC, TASK (условие дословно), TASKS (чеклист блоков), PROGRESS, KICKOFF-PROMPT (что писать агенту), `.env.example`, дизайн-токены для `globals.css`, необязательные Dockerfile и compose.yaml.
+- `templates/` — README, SPEC, TASK (условие дословно), TASKS (чеклист блоков), PROGRESS, KICKOFF-PROMPT (что писать агенту), `.env.example`, дизайн-токены для `globals.css`.
 - `codex/config.toml` — конфиг Codex.
 - `install.ps1` — раскладывает скиллы в `~/.claude/skills` и `~/.codex/skills`, конфиг в `~/.codex`.
 - `prewarm.ps1` — прогрев ноутбука: кладёт в кэш pnpm все пакеты дня и проверяет скаффолд и сборку.
