@@ -13,7 +13,7 @@
 ## Что внутри
 
 - `AGENTS.md`, `CLAUDE.md` — конвенции для Claude Code и Codex. Копируются в корень проекта в первые 10 минут.
-- `skills/*` — скиллы: агент на AI SDK v7, консоль агента, README под рубрику, скрипт verify, дизайн-проход, деплой.
+- `skills/*` — скиллы: агент на AI SDK v7, консоль агента, README под рубрику, скрипт verify, дизайн-проход, деплой, security-pass.
 - `templates/*` — README, SPEC, PROGRESS, `.env.example`, дизайн-токены для `globals.css`.
 - `codex/config.toml` — конфиг Codex для ноутбука.
 - `WINNING-SHAPE.md` — универсальная форма продукта под рубрику и как за 15 минут натянуть на неё любую задачу.

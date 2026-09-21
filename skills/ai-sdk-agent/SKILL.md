@@ -27,7 +27,7 @@ export const tools = {
 };
 
 export const agent = new ToolLoopAgent({
-  model: openai(process.env.AGENT_MODEL ?? 'gpt-5-mini'),
+  model: openai(process.env.AGENT_MODEL ?? 'gpt-5.6-terra'),
   instructions: 'You are an operator assistant. Read first, then act. Explain every write in one sentence.',
   tools,
   stopWhen: isStepCount(6),
@@ -65,6 +65,8 @@ const { messages, sendMessage, addToolApprovalResponse, status } = useChat({
 Structured final answer when the task needs a typed result: `output: Output.object({ schema })` on the agent, read `result.output`.
 
 Tests (tests/agent.test.ts): `import { MockLanguageModelV4 } from 'ai/test'`. Pass `doGenerate` as an array: first item returns a `tool-call` content part (`toolCallId`, `toolName`, `input` as JSON string, `finishReason: { unified: 'tool-calls', raw: undefined }`), second item returns a `text` part with `finishReason: { unified: 'stop', raw: undefined }`. Build a ToolLoopAgent with that model and the real tools against a seeded test db; assert the db changed.
+
+Models (OpenAI lineup as of 2026-09-21, per 1M tokens in/out): gpt-5.6-luna $0.20/$1.20, gpt-5.6-terra $2/$12, gpt-5.6-sol $4/$20, gpt-6-astra $10/$50. A 6-step run is roughly 30k input + 2k output tokens: luna ≈ $0.01, terra ≈ $0.09, astra ≈ $0.40. Iterate on luna, ship on terra, measure latency in rehearsal; the loop must finish under 30 s. If the task has one hard analysis step, call it once with generateText and AGENT_MODEL_DEEP (gpt-6-astra) outside the loop; never put astra inside the loop.
 
 Rules:
 - Read tools execute; write tools go through toolApproval. Never fake a tool result.

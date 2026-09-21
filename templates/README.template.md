@@ -32,7 +32,7 @@ flowchart LR
 - `{{read_tool_2}}` — читает {{что}}.
 - `{{write_tool}}` — меняет {{что}}; требует подтверждения пользователя (toolApproval).
 
-Модель: `AGENT_MODEL` из env (по умолчанию `gpt-5-mini`), провайдер `@ai-sdk/openai`. Лимит 6 шагов на запуск, таймаут маршрута 60 с.
+Модель: `AGENT_MODEL` из env (по умолчанию `gpt-5.6-terra`), провайдер `@ai-sdk/openai`. Лимит 6 шагов на запуск, таймаут маршрута 60 с.
 Заготовленных или закэшированных ответов модели в приложении нет: каждый запуск вызывает живую модель.
 
 Стек: Next.js 16, TypeScript, Tailwind v4, shadcn/ui, Vercel AI SDK v7, zod, @libsql/client, vitest.

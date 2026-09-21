@@ -1,6 +1,7 @@
 # ~/.codex/config.toml для ноутбука.
 # Имена ключей проверить на репетиции: запусти `codex` и убедись, что конфиг принят без предупреждений.
-model = "gpt-5.4"
+# model намеренно не задан: Codex берёт лучшую модель тарифа сам (на Pro это gpt-5.6/gpt-6 линейка).
+# Задать вручную только если /model в Codex показывает что-то слабее, чем gpt-5.6-sol.
 model_reasoning_effort = "medium"
 approval_policy = "on-failure"
 sandbox_mode = "workspace-write"
