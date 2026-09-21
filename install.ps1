@@ -1,4 +1,4 @@
-# Ставит скиллы в ~/.claude/skills и конфиг Codex в ~/.codex/config.toml (старый сохраняется как .bak).
+# Ставит скиллы в ~/.claude/skills и ~/.codex/skills, конфиг Codex в ~/.codex/config.toml (старый сохраняется как .bak).
 $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
@@ -13,6 +13,14 @@ Get-ChildItem (Join-Path $here "skills") -Directory | ForEach-Object {
 
 $codexDir = Join-Path $HOME ".codex"
 New-Item -ItemType Directory -Force $codexDir | Out-Null
+$codexSkills = Join-Path $codexDir "skills"
+New-Item -ItemType Directory -Force $codexSkills | Out-Null
+Get-ChildItem (Join-Path $here "skills") -Directory | ForEach-Object {
+  $dest = Join-Path $codexSkills $_.Name
+  New-Item -ItemType Directory -Force $dest | Out-Null
+  Copy-Item (Join-Path $_.FullName "SKILL.md") (Join-Path $dest "SKILL.md") -Force
+}
+Write-Host "codex skills: $codexSkills"
 $cfg = Join-Path $codexDir "config.toml"
 if (Test-Path $cfg) { Copy-Item $cfg "$cfg.bak" -Force; Write-Host "backup: $cfg.bak" }
 Copy-Item (Join-Path $here "codex\config.toml") $cfg -Force
