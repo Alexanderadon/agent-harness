@@ -45,6 +45,12 @@ Spawn a read-only subagent (or do it yourself without editing) that reads docs/T
 ## "стоп"
 Discard uncommitted changes outside the current block, return to the current block and its criterion, confirm in one line.
 
+## Seed from the captain
+At the start of block 1 (and again at block 3), check docs/seed-draft.json. If it exists, it becomes data/seed.json (adapt field names to lib/types.ts, keep every row and the problem rows), and the request line in TASKS.md is marked done. One dataset for the app and for the README.
+
+## Git conflicts
+If `git pull --rebase --autostash` reports a conflict (TASKS.md or PROGRESS.md edited by both): `git rebase --abort`, then `git pull --no-rebase origin main`, keep both sides' lines, commit "merge", push. If `git push` is rejected as non-fast-forward, pull again the same way and push again. Never force.
+
 ## Requests to the teammate
 If the docs side needs something from the code side (a screenshot, a value, a command output), the request appears in TASKS.md under "requests". Handle open requests addressed to А at the start of each block, in one commit, then continue.
 

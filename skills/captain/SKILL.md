@@ -22,7 +22,13 @@ Read AGENTS.md, SPEC.md, docs/TASK.md, TASKS.md, docs/README.template.md, docs/v
 Write or update README.md by the template: every section filled from what actually exists in the code; requirement table with file paths; paste verify.log and test.log contents into the verification section; limitations honest; disclosure section; team section. Where a fact is unknown, leave {{…}} and list the unknowns at the end of your reply as questions for Александр. Commit "docs: readme".
 
 ## "testdata"
-Only if docs/TASK.md asks for an attached data set. Read SPEC.md for the entity shape. Produce data/test-cases.json (or the format the task names): at least the required count, realistic Kazakhstan names, cities, amounts in tenge, relative dates, and a short docs/test-cases.md describing columns and the expected outcome per row. Commit "data: test cases".
+Only if docs/TASK.md asks for an attached data set. Read SPEC.md for the entity shape. Do not create a second dataset next to the app's seed: write docs/seed-draft.json (at least the required count, realistic Kazakhstan names, cities, amounts in tenge, relative dates as days_ago, the problem rows the scenario needs) and docs/test-cases.md describing columns and the expected outcome per row. Add a line to TASKS.md under requests: "А: принять docs/seed-draft.json как data/seed.json". Commit "docs: seed draft and test cases". The app must run on exactly this data, so the judge sees one dataset, not two.
+
+## Never run
+`pnpm install`, `pnpm dev`, `pnpm build`, `pnpm test` or any script: this laptop reads files and writes documents only. The judge check at 4:15 is done by the human in a fresh clone, not by this agent.
+
+## Git conflicts
+If `git pull --rebase --autostash` reports a conflict (TASKS.md or PROGRESS.md edited by both): `git rebase --abort`, then `git pull --no-rebase origin main`, keep both sides' lines, commit "merge", push. If `git push` is rejected as non-fast-forward, pull again the same way and push again. Never force.
 
 ## "audit"
 Read README.md sentence by sentence. For every factual claim, open the referenced file and confirm. Output a list: confirmed, unconfirmed, contradicted. Delete or fix contradicted claims in README; leave unconfirmed ones as questions for Александр. Commit "docs: readme audit".
