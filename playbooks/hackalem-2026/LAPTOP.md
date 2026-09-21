@@ -22,7 +22,7 @@
 - [ ] Telegram-канал хакатона и почта открыты на телефоне у обоих.
 
 ## Репозитории, которые можно использовать открыто (Положение 6.4: раскрыть в README)
-- `Alexanderadon/hackalem-env` — этот комплект: конвенции, скиллы, шаблоны.
+- `Alexanderadon/agent-harness` — этот комплект: конвенции, скиллы, шаблоны.
 - `Alexanderadon/neon-tap` — Upstash Redis по REST, серверлесс-функции Vercel без зависимостей, PWA.
 - `Alexanderadon/resto-miniapp` — идемпотентные вебхуки, Telegram-бот через fetch, zod-схемы, Stripe.
 - `Alexanderadon/almaty-air` — адаптеры внешних источников, которые никогда не бросают, cron-сбор.

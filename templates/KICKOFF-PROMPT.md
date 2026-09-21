@@ -6,8 +6,9 @@
 ## −1. Перенос комплекта в репозиторий команды (0:02, одна команда агенту или руками)
 
 ```
-Склонируй https://github.com/Alexanderadon/hackalem-env во временную папку рядом, скопируй в корень этого репозитория AGENTS.md и CLAUDE.md,
-templates/TASKS.template.md как TASKS.md, templates/env.example как .env.example, создай папку docs. Временную папку удали.
+Склонируй https://github.com/Alexanderadon/agent-harness во временную папку рядом, скопируй в корень этого репозитория AGENTS.md и CLAUDE.md,
+templates/TASKS.template.md как TASKS.md, templates/env.example как .env.example; создай папку docs и положи туда
+playbooks/hackalem-2026/WINNING-SHAPE.md и templates/SPEC.template.md. Временную папку удали.
 Закоммить одной строкой «conventions (disclosed)» и запушь. Больше ничего не делай.
 ```
 
@@ -16,7 +17,7 @@ templates/TASKS.template.md как TASKS.md, templates/env.example как .env.e
 ## 0. Черновик SPEC силами агента (0:05, сразу после того, как условие лежит в docs/TASK.md)
 
 ```
-Прочитай AGENTS.md, WINNING-SHAPE.md, docs/TASK.md и templates/SPEC.template.md.
+Прочитай AGENTS.md, docs/WINNING-SHAPE.md, docs/TASK.md и docs/SPEC.template.md.
 Заполни SPEC.md по шаблону под эту задачу: одна сущность, два инструмента чтения, один или два записи, сценарий из шести шагов,
 ожидаемое состояние для verify, раздел «Не делаем». Каждое обязательное требование из docs/TASK.md должно быть привязано
 к инструменту или экрану; если какое-то не ложится, напиши это отдельной строкой «НЕ ЗАКРЫТО».

@@ -15,7 +15,7 @@ Must contain:
 5. "Проверка основного сценария": numbered steps with the expected result at each step, plus pasted output of one real `pnpm verify` run and of `pnpm test`.
 6. "Базовая надёжность и безопасность": input validation, error handling, limits (steps, timeout), behaviour on bad input, no secrets in repo.
 7. "Известные ограничения": honest list, 3 to 6 items.
-8. "Использованные внешние материалы": the disclosure text from hackalem-env/README.md, libraries, AI tools used (Claude Code, Codex, which for what).
+8. "Использованные внешние материалы": the disclosure text from agent-harness/README.md, libraries, AI tools used (Claude Code, Codex, which for what).
 9. "Команда": names, roles, who did what.
 
 Language: Russian with an English TL;DR. No marketing adjectives. Every claim points to a file path.

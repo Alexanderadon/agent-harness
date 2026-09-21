@@ -5,7 +5,7 @@ description: 15-minute visual pass that makes a shadcn default UI look like a fi
 
 # Design pass, 15 minutes, in this order
 
-1. Replace the :root tokens in app/globals.css with templates/globals.tokens.css from hackalem-env (background #F2F2F2, card #FFFFFF, border #D1D1D1, foreground #000000, muted-foreground #7A7A7A, primary #000000, radius 8px small, 28px for large cards).
+1. Replace the :root tokens in app/globals.css with templates/globals.tokens.css from agent-harness (background #F2F2F2, card #FFFFFF, border #D1D1D1, foreground #000000, muted-foreground #7A7A7A, primary #000000, radius 8px small, 28px for large cards).
 2. Font: Golos Text via next/font/google on body; headings tracking-tight; page title text-3xl; section titles text-lg font-medium.
 3. Spacing on an 8px grid: page padding p-6 desktop, p-4 mobile; gap-4 between cards; gap-2 inside.
 4. Large containers (table card, agent panel) get rounded-[28px]; buttons, inputs, badges keep rounded-lg.
