@@ -56,7 +56,7 @@ flowchart LR
 ```bash
 git clone {{URL репозитория}}
 cd {{папка}}
-corepack enable          # даёт pnpm 10, если его нет
+corepack enable          # даёт pnpm 10; без прав администратора вместо этого: npm i -g pnpm@10
 pnpm install
 ```
 

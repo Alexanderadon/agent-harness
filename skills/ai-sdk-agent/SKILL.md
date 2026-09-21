@@ -60,9 +60,10 @@ Client (components/agent-panel.tsx):
 
 ```ts
 import { useChat } from '@ai-sdk/react';
-import { lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
-const { messages, sendMessage, addToolApprovalResponse, status, error } = useChat({
-  sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+import { lastAssistantMessageIsCompleteWithApprovalResponses } from 'ai';
+const { messages, sendMessage, addToolApprovalResponse, status, error, stop } = useChat({
+  // NOT lastAssistantMessageIsCompleteWithToolCalls: that one ignores the approval-responded state and the loop stalls after Approve (verified ai@7.0.108)
+  sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithApprovalResponses,
 });
 // message.parts: type 'text' | 'tool-<name>' (static) | 'dynamic-tool'
 // part.state: 'input-streaming' | 'input-available' | 'approval-requested' | 'approval-responded'
@@ -72,12 +73,12 @@ const { messages, sendMessage, addToolApprovalResponse, status, error } = useCha
 
 Structured final answer when the task needs a typed result: `output: Output.object({ schema })` on the agent, read `result.output`.
 
-Tests (tests/agent.test.ts): `import { MockLanguageModelV4 } from 'ai/test'`. Pass `doGenerate` as an array: first item returns a `tool-call` content part (`toolCallId`, `toolName`, `input` as JSON string, `finishReason: { unified: 'tool-calls', raw: undefined }`), second item returns a `text` part with `finishReason: { unified: 'stop', raw: undefined }`. Build a ToolLoopAgent with that model and the real tools against a seeded test db; assert the db changed. Mocks live only in tests.
+Tests (tests/agent.test.ts): `import { MockLanguageModelV4 } from 'ai/test'`. Pass `doGenerate` as an array; every item needs `content`, `finishReason: { unified, raw: undefined }`, `usage: { inputTokens: { total: 0, noCache: 0, cacheRead: 0, cacheWrite: 0 }, outputTokens: { total: 0, text: 0, reasoning: 0 } }` and `warnings: []` (the last two are mandatory, the loop throws without them). First item: `content: [{ type: 'tool-call', toolCallId, toolName, input: JSON.stringify(args) }]`, `finishReason.unified: 'tool-calls'`; second: `content: [{ type: 'text', text }]`, `unified: 'stop'`. Build a ToolLoopAgent with that model and the real tools against a seeded :memory: db; assert the db changed, and assert that without approval the write tool did not run. To call a tool directly in tests: `tool.execute(input, { toolCallId, messages: [], context: {} })`; `context` is required in v7. Mocks live only in tests.
 
 Models (OpenAI lineup as of 2026-09-21, per 1M tokens in/out): gpt-5.6-luna $0.20/$1.20, gpt-5.6-terra $2/$12, gpt-5.6-sol $4/$20, gpt-6-astra $10/$50. A 6-step run is roughly 30k input + 2k output tokens: luna ≈ $0.01, terra ≈ $0.09, astra ≈ $0.40. Iterate on luna, ship on terra, measure latency in rehearsal; the loop must finish under 30 s. If the task has one hard analysis step, call it once with generateText and AGENT_MODEL_DEEP (gpt-6-astra) outside the loop; never put astra inside the loop.
 
 Rules:
 - Read tools execute; write tools go through toolApproval. Never fake a tool result. Record ids never appear in lib/ or app/ logic.
 - Default step limit 6. Rely on route `maxDuration = 60` for the time budget.
-- Model id via env. Fallback provider: `createOpenAICompatible({ name: 'nvidia', baseURL: 'https://integrate.api.nvidia.com/v1', apiKey: process.env.NVIDIA_API_KEY })` from '@ai-sdk/openai-compatible', only when OPENAI_API_KEY is missing and NVIDIA_API_KEY is present.
+- Model id via env. `createAgentUIStreamResponse` takes `uiMessages` (the README says `messages`; the d.ts is right). For a verify-only run pass `toolApproval: { <write>: 'approved' }` from the script, never from the app. NVIDIA fallback only if `@ai-sdk/openai-compatible` is installed; the scaffold does not install it, so skip it unless the task needs it.
 - If a name above does not exist in node_modules/ai, open node_modules/ai/README.md and node_modules/ai/dist/index.d.ts and use the real name. Do not guess.
