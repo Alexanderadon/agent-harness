@@ -42,7 +42,7 @@ cp ../kit-tmp/templates/TASKS.template.md TASKS.md
 cp ../kit-tmp/templates/env.example .env.example
 cp ../kit-tmp/templates/PROGRESS.template.md PROGRESS.md
 mkdir -p docs
-cp ../kit-tmp/playbooks/hackalem-2026/WINNING-SHAPE.md ../kit-tmp/templates/SPEC.template.md ../kit-tmp/templates/README.template.md docs/
+cp ../kit-tmp/playbooks/hackalem-2026/WINNING-SHAPE.md ../kit-tmp/templates/SPEC.template.md ../kit-tmp/templates/README.template.md ../kit-tmp/templates/TASK.template.md docs/
 rm -rf ../kit-tmp
 ```
 
