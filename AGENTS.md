@@ -13,5 +13,6 @@ Reliability: zod on every API input, 400 on invalid input. App runs without OPEN
 Docs: read node_modules/next/dist/docs before touching Next APIs and node_modules/ai/README.md for SDK names. Never fetch external docs.
 Tests: vitest. tests/tools.test.ts (tools against a seeded db) and tests/agent.test.ts (MockLanguageModelV4 from 'ai/test'). pnpm test must pass with no API key.
 Done means: pnpm typecheck, pnpm test and pnpm verify pass; works at 390px width; deployed URL opens; the scenario in SPEC.md runs end to end.
-Do not: add libraries not listed here, refactor working code, add features not in TASKS.md, write tests beyond the two files, edit README.md or PROGRESS.md (owned by the PM).
+Extras allowed without asking, only when docs/TASK.md needs them: maplibre-gl + react-map-gl (maps), recharts (charts), papaparse (CSV), xlsx (Excel), pdf-parse (PDF text), resend (email), Telegram Bot API via plain fetch (no library). Anything else: ask first with one sentence why.
+Do not: add libraries beyond this file, refactor working code, add features not in TASKS.md, write tests beyond the two files, edit README.md or PROGRESS.md (owned by the PM).
 Commit after every finished task with a one-line message. Push at least once per hour.
