@@ -1,0 +1,87 @@
+НОУТБУК АЛЕКСАНДРА · УСТАНОВКА С НУЛЯ
+=======================================
+Всё в PowerShell от обычного пользователя, если не сказано иначе. Порядок важен.
+Галочку ставить только после проверки, которая написана рядом.
+
+ШАГ 0. WINDOWS
+  [ ] Часы: Параметры > Время и язык > синхронизировать, часовой пояс Астана (UTC+5).
+  [ ] PowerShell один раз:   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+  [ ] Папка для всего:       New-Item -ItemType Directory -Force C:\hack
+      Путь без кириллицы и пробелов. Всё, что ниже, кладётся в C:\hack.
+
+ШАГ 1. NODE И PNPM
+  [ ] Node.js 22 LTS: https://nodejs.org (кнопка LTS), установщик, всё по умолчанию.
+      Проверка:   node -v          -> v22.x
+  [ ] pnpm 10:    corepack enable
+                  corepack prepare pnpm@latest --activate
+      Проверка:   pnpm -v          -> 10.x
+
+ШАГ 2. GIT
+  [ ] Git for Windows: https://gitforwindows.org , установщик, всё по умолчанию (Git Credential Manager включён).
+  [ ] git config --global user.name "Alexander Kurchakov"
+      git config --global user.email "fistin103@gmail.com"
+  [ ] Первый вход в GitHub: сделать любой git push в свой тестовый репозиторий, в окне войти как Alexanderadon.
+      Проверка:   git config --global --list   -> имя и почта на месте
+
+ШАГ 3. CLAUDE (главный инструмент)
+  [ ] Приложение Claude: https://claude.ai/download , установить, войти в аккаунт с Max. Вкладка Code.
+  [ ] Дополнительно CLI, чтобы работать из терминала:   npm i -g @anthropic-ai/claude-code
+      Проверка:   claude --version
+      Первый запуск claude в любой папке -> войти тем же аккаунтом.
+  Перенос контекста с основного компьютера: файл CLAUDE-CODE-TRANSFER.txt рядом.
+
+ШАГ 4. CODEX
+  [ ] npm i -g @openai/codex
+      Проверка:   codex --version
+  [ ] codex login  -> свой аккаунт сейчас. 23.09 в 12:30 выйти и войти в перк-аккаунт.
+
+ШАГ 5. VERCEL
+  [ ] npm i -g vercel
+  [ ] vercel login   (аккаунт fistin103)
+      Проверка:   vercel whoami    -> fistin103
+
+ШАГ 6. ОСТАЛЬНЫЕ ПРОГРАММЫ
+  [ ] VS Code: https://code.visualstudio.com
+  [ ] Chrome или Edge. Telegram Desktop.
+  НЕ ставить: Docker, Python, Ollama, Blender, Figma, GUI для баз данных.
+
+ШАГ 7. КОМПЛЕКТ КОМАНДЫ
+  [ ] cd C:\hack
+      git clone https://github.com/Alexanderadon/agent-harness
+      cd agent-harness
+      .\install.ps1 -Role alexander
+      Проверка: в выводе строки "skill: ..." и "role (alexander): ...".
+  [ ] .\prewarm.ps1     (5–10 минут, ставит пакеты дня в кэш, проверяет скаффолд и сборку)
+      Проверка: последняя строка "Прогрев прошёл".
+  [ ] Проверка агента: открыть Claude Code в C:\hack\agent-harness, написать   Я Александр
+      Ответ: четыре строки, роль "код", твоё git-имя, ветка, список команд.
+
+ШАГ 8. РЕПОЗИТОРИЙ КОМАНДЫ
+  [ ] cd C:\hack
+      git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra lomra
+      Только клон. Ничего не коммитить и не пушить до 13:30 23.09.
+
+ШАГ 9. АККАУНТЫ И КЛЮЧИ
+  [ ] https://platform.openai.com : своя организация, $5 на балансе, ключ создан и лежит в менеджере паролей.
+      Settings > Limits: лимит расходов $40 в день.
+  [ ] https://app.turso.tech : вход через GitHub, Create Database, скопировать URL, Generate Token. Оба в менеджер паролей.
+  [ ] https://vercel.com : в дашборде Add New > Project можно не создавать, проект создастся командой в день.
+      Обязательно после первого деплоя: Settings > Deployment Protection > Vercel Authentication выключить.
+  [ ] https://build.nvidia.com : аккаунт есть, ключ сохранён. Только резерв.
+
+ШАГ 10. ЖЕЛЕЗО И СВЯЗЬ
+  [ ] LAN-переходник USB-A -> RJ-45 проверен с кабелем.
+  [ ] Wi-Fi 5 ГГц виден. Хотспот с телефона проверен как третий канал.
+  [ ] Зарядка. Телефон с инкогнито-вкладкой для проверки живого URL.
+
+ШАГ 11. РЕПЕТИЦИЯ (единственная проверка кода, а не документов)
+  [ ] playbooks\hackalem-2026\REHEARSAL.md из комплекта, хотя бы час, на этом ноутбуке.
+
+В ДЕНЬ, 23.09
+  12:30  ключ API из кабинета -> C:\hack\lomra\.env.local (две строки: OPENAI_API_KEY=..., AGENT_MODEL=gpt-5.6-luna)
+         тот же ключ в Vercel после первого деплоя:  vercel env add OPENAI_API_KEY production
+  12:35  codex: выйти из своего аккаунта, войти в перк-аккаунт
+  13:00  Claude Code открыт в C:\hack\lomra, второе окно PowerShell там же
+  13:30  во втором окне:  .\..\agent-harness\hack-clock.ps1 -Start 13:30   (реальное время старта)
+         агенту:  Я Александр     потом:  scaffold
+  Дальше по странице "02 Александр" в Obsidian или в playbooks\hackalem-2026\guide.

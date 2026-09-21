@@ -1,0 +1,62 @@
+НОУТБУК ЭМИНЫ · УСТАНОВКА С НУЛЯ
+==================================
+Всё в PowerShell. Порядок важен. Галочку ставить только после проверки, которая написана рядом.
+
+ШАГ 0. WINDOWS
+  [ ] Часы синхронизированы, часовой пояс Астана.
+  [ ] PowerShell один раз:   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+  [ ] Папка:                 New-Item -ItemType Directory -Force C:\hack
+
+ШАГ 1. NODE И PNPM
+  [ ] Node.js 22 LTS: https://nodejs.org , установщик по умолчанию.     Проверка: node -v -> v22.x
+  [ ] corepack enable
+      corepack prepare pnpm@latest --activate                            Проверка: pnpm -v -> 10.x
+
+ШАГ 2. GIT ПОД СВОИМ ИМЕНЕМ (это важно: коммиты должны быть твои)
+  [ ] Git for Windows: https://gitforwindows.org , установщик по умолчанию.
+  [ ] git config --global user.name "Эмина Ануарбекова"
+      git config --global user.email "почта твоего аккаунта GitHub"
+  [ ] Первый вход: любой git push в свой тестовый репозиторий на GitHub, в окне войти своим аккаунтом.
+      Проверка: git config --global --list -> твои имя и почта.
+
+ШАГ 3. ПРАВО ЗАПИСИ В РЕПОЗИТОРИЙ КОМАНДЫ
+  [ ] Открыть под своим аккаунтом: https://github.com/BAITC-Hacks/hack-463fe33c-lomra
+      На README виден карандаш "Edit" и кнопка "Add file"  -> право есть.
+      Не видно -> до 22.09 написать организаторам (team@baitc.org или чат), чтобы добавили твой аккаунт.
+  [ ] cd C:\hack
+      git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra lomra
+      Только клон. Ничего не отправлять до 13:30 23.09.
+
+ШАГ 4. АГЕНТ (Codex)
+  [ ] npm i -g @openai/codex          Проверка: codex --version
+  [ ] codex login  -> свой аккаунт ChatGPT (нужен Plus или Pro). Если подписки нет, этот шаг делается 23.09 в 12:30 с перк-аккаунтом.
+  Запасной вариант вместо Codex: Claude Code (npm i -g @anthropic-ai/claude-code) со своим аккаунтом Claude, если он есть.
+
+ШАГ 5. КОМПЛЕКТ КОМАНДЫ
+  [ ] cd C:\hack
+      git clone https://github.com/Alexanderadon/agent-harness
+      cd agent-harness
+      .\install.ps1 -Role emina
+      Проверка: строки "skill: ..." и "role (emina): ...".
+  [ ] Проверка агента: cd C:\hack\lomra , запустить   codex --full-auto , написать   Я Эмина
+      Ответ: четыре строки, роль "капитан", твоё git-имя, ветка, команды task/progress/readme/testdata/audit/submit.
+      Если Codex не видит скилл: первым сообщением вставить текст файла C:\hack\agent-harness\skills\captain\SKILL.md, потом  Я Эмина.
+  [ ] Пробная команда в любом своём тестовом репозитории:  progress   -> строка в PROGRESS.md и пуш прошёл.
+
+ШАГ 6. ПУТЬ СУДЬИ, ОДИН РАЗ РУКАМИ
+  [ ] На любом проекте с GitHub:  git clone ...  ,  pnpm install  ,  pnpm dev  , открыть http://localhost:3000
+      Смысл: 23.09 в 4:15 ты повторишь это с репозиторием команды строго по README, без подсказок Александра.
+
+ШАГ 7. ОСТАЛЬНОЕ
+  [ ] VS Code (читать README и SPEC). Chrome или Edge. Telegram Desktop.
+  [ ] Прочитать из комплекта: playbooks\hackalem-2026\PICK-TASK.md (выбор задачи) и guide\03 Эмина.md (твой день).
+  [ ] Телефон: чат хакатона https://t.me/+pKzbwN43ot1hYTRi , почта, инкогнито-вкладка.
+  НЕ ставить: Docker, Python, Vercel, Turso. Это не твоя часть.
+
+В ДЕНЬ, 23.09
+  12:30  перки в кабинете: ключ API в менеджер паролей (свой и запасной), подписка Codex активирована.
+  12:35  если Codex не проверялся раньше: codex login перк-аккаунтом, в C:\hack\lomra:  Я Эмина , потом в тестовой папке  progress.
+  12:40  методика оценки и порядок отбора: прочитать первой, Александру три вещи: условия допуска, материалы, дедлайн.
+  13:30  своему агенту:  Я Эмина .  Тексты задач в один файл, промпт из PICK-TASK.md в свой ChatGPT, рейтинг Александру.
+  13:38  агенту:  task  и вставить текст выбранной задачи.
+  Дальше по странице "03 Эмина".

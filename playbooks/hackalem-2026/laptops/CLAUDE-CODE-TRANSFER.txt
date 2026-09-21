@@ -1,0 +1,42 @@
+CLAUDE CODE НА НОУТБУКЕ · УСТАНОВКА И ПЕРЕНОС КОНТЕКСТА
+=========================================================
+
+ЧТО ПЕРЕНОСИТСЯ САМО, ЕСЛИ ВОЙТИ ТЕМ ЖЕ АККАУНТОМ
+  Подписка и лимиты. Больше ничего. Чаты, память и настройки Claude Code лежат локально
+  на основном компьютере в C:\Users\И\.claude\ и на ноутбук не приезжают.
+
+ЧТО ДЕЙСТВИТЕЛЬНО НУЖНО НА НОУТБУКЕ
+  1. Скиллы и роль          -> ставит install.ps1 из agent-harness (ШАГ 7 в ALEXANDER-SETUP.txt).
+  2. Контекст решений       -> файл playbooks\hackalem-2026\CONTEXT.md в agent-harness: там всё, что решено.
+  3. Эта переписка          -> файл hackalem-chat-2026-09-21.md в папке "ноуты настройка хакатон" (экспорт сессии).
+  4. Память Claude о хакатоне -> файл claude-memory-project_hackalem.md в той же папке.
+
+УСТАНОВКА
+  [ ] Приложение Claude: https://claude.ai/download , войти аккаунтом с Max. Вкладка Code.
+  [ ] CLI:  npm i -g @anthropic-ai/claude-code   ,  claude --version  , первый запуск -> вход тем же аккаунтом.
+  [ ] Режим без подтверждений: в приложении выбрать режим разрешений "bypass"; в терминале  claude --dangerously-skip-permissions
+  [ ] cd C:\hack\agent-harness ; .\install.ps1 -Role alexander
+      Это создаёт C:\Users\<ты>\.claude\skills\* и дописывает роль в C:\Users\<ты>\.claude\CLAUDE.md
+
+ПЕРЕНОС КОНТЕКСТА, ТРИ ФАЙЛА С ФЛЕШКИ ИЛИ ИЗ ОБЛАКА
+  Папка на основном компьютере:  D:\projects\ноуты настройка хакатон\
+  [ ] Скопировать её на ноутбук в C:\hack\setup\
+  [ ] Открыть Claude Code в C:\hack\agent-harness и написать одно сообщение:
+
+      Прочитай playbooks/hackalem-2026/CONTEXT.md и C:/hack/setup/hackalem-chat-2026-09-21.md.
+      Это контекст подготовки к хакатону, в нём всё решено. Ничего не делай, скажи в пяти строках, что понял.
+
+  [ ] Память (по желанию): после первого запуска claude в папке C:\hack\lomra появится
+      C:\Users\<ты>\.claude\projects\C--hack-lomra\memory\ . Скопировать туда claude-memory-project_hackalem.md
+      и дописать в MEMORY.md строку:
+      - [HackAlem AI 23.09.2026](claude-memory-project_hackalem.md) — команда Lomra, правила, комплект agent-harness
+
+ПРО ПЕРЕНОС САМИХ ЧАТОВ
+  Сессии Claude Code привязаны к пути папки проекта. Чтобы на ноутбуке открыть именно эту сессию через claude --resume,
+  нужен тот же путь E:\автоматизация работа linkedIn и папка C:\Users\<ты>\.claude\projects\E-----------------------linkedIn\
+  с основного компьютера. На ноутбуке без диска E: это не работает, и на хакатоне не нужно: экспорт переписки в файл
+  даёт то же самое, а роль и правила дня живут в скиллах.
+
+ПРОВЕРКА, ЧТО ВСЁ ВСТАЛО
+  [ ] В Claude Code набрать  /  -> в списке scaffold, hackathon-day, captain, ai-sdk-agent, agent-console, verify-script, deploy-first, design-pass, security-pass, readme-rubric
+  [ ] Написать  Я Александр  -> четыре строки: роль, git-имя, ветка, команды.
