@@ -26,6 +26,7 @@ Docker, Python, Ollama, Blender, Figma, GUI для баз данных, любы
 ## Аккаунты и ключи
 - [ ] GitHub Alexanderadon: первый `git push` в любой тестовый репозиторий с ноутбука прошёл (Credential Manager запомнил вход).
 - [ ] `git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra` проходит. Клон читать, ничего не пушить до старта.
+- [ ] В папке клона `git push --dry-run origin main` отвечает «Everything up-to-date»: вход в GitHub на этом ноутбуке под нужным аккаунтом и право записи есть. Ничего при этом не отправляется. 403 значит, Credential Manager запомнил чужой аккаунт.
 - [ ] platform.openai.com: своя организация, $5 на балансе, ключ в менеджере паролей, не в файлах. Лимит расходов $40 в день на 23–29.09.
 - [ ] Turso: вход через GitHub на app.turso.tech, база создана в веб-дашборде (CLI на Windows нет), URL и токен в менеджере паролей.
 - [ ] Vercel: пустой проект создан, env вбиты (OPENAI_API_KEY, AGENT_MODEL, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN), Deployment Protection выключена.

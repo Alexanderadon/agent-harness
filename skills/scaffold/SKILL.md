@@ -43,7 +43,7 @@ pnpm add -D vitest tsx "@types/node@^22"
 ## 3. Repo hygiene (now, not later)
 
 - `.nvmrc`: write the file with a tool that writes UTF-8, or `[IO.File]::WriteAllText("$PWD\.nvmrc", "22`n")`. Never `echo 22 > .nvmrc` in PowerShell 5: that writes UTF-16 with a BOM and Node ignores it.
-- `.gitignore`: keep the generated `.env*` line and add `!.env.example` right after it, otherwise the kit's `.env.example` is never committed. Add `data/app.db`. Add `.claude/` and `.codex/`: the desktop app writes `.claude/launch.json` and `.claude/settings.local.json` into the project folder as local tool residue, and `git add -A` at a checkpoint would otherwise commit it (skills and CLAUDE.md come from the kit and the home folder, the repo needs no `.claude/`).
+- `.gitignore`: keep the generated `.env*` line and add `!.env.example` right after it, otherwise the kit's `.env.example` is never committed. Add `data/app.db*` (the file db also creates -journal, -wal and -shm side files). Add `.claude/` and `.codex/`: the desktop app writes `.claude/launch.json` and `.claude/settings.local.json` into the project folder as local tool residue, and `git add -A` at a checkpoint would otherwise commit it (skills and CLAUDE.md come from the kit and the home folder, the repo needs no `.claude/`).
 - `.gitattributes` with one line `* text=auto eol=lf`, then `git add --renormalize .` (two Windows laptops otherwise fight over CRLF).
 - `next.config.ts`: `serverExternalPackages: ['@libsql/client', 'libsql']` so Turbopack leaves native bindings alone.
 - `pnpm-workspace.yaml` (generated) lists `ignoredBuiltDependencies`; remove `sharp` from that list if present, it conflicts with the next line.

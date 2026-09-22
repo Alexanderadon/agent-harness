@@ -60,5 +60,6 @@ If the docs side needs something from the code side (a screenshot, a value, a co
 
 ## Always
 - Libraries only from AGENTS.md; for anything else ask first with one sentence.
+- Helper scripts, scans, scratch outputs and downloaded files never go into the repository: use the OS temp folder or a folder next to the repo. Before every commit `git status --short` shows only files the block was meant to produce.
 - Never print or commit .env* contents. Logs and command output: last 50 lines only.
 - Before any code, the four sources of truth are AGENTS.md, docs/TASK.md, SPEC.md, TASKS.md.

@@ -26,6 +26,11 @@
   [ ] cd C:\hack
       git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra lomra
       Только клон. Ничего не отправлять до 13:30 23.09.
+  [ ] Проверка права записи и входа в GitHub с этого ноутбука, без отправки чего-либо:
+      cd C:\hack\lomra
+      git push --dry-run origin main
+      Ответ "Everything up-to-date" -> право есть, вход под твоим аккаунтом работает.
+      Ответ с "denied" или 403 -> входа под своим аккаунтом нет или права нет: писать организаторам до 22.09.
 
 ШАГ 4. АГЕНТ (Codex)
   [ ] npm i -g @openai/codex          Проверка: codex --version
@@ -50,7 +55,7 @@
 ШАГ 7. ОСТАЛЬНОЕ
   [ ] VS Code (читать README и SPEC). Chrome или Edge. Telegram Desktop.
   [ ] Прочитать из комплекта: playbooks\hackalem-2026\PICK-TASK.md (выбор задачи), guide\03 Эмина.md (твой день) и guide\06 Как писать агенту.md (команды и что отвечать агенту).
-  [ ] Телефон: чат хакатона https://t.me/+pKzbwN43ot1hYTRi , почта, инкогнито-вкладка.
+  [ ] Телефон: чат хакатона (ссылка-приглашение в «ЧИТАТЬ ПЕРВЫМ.txt» и в твоём Telegram), почта, инкогнито-вкладка.
   НЕ ставить: Docker, Python, Vercel, Turso. Это не твоя часть.
 
 В ДЕНЬ, 23.09
