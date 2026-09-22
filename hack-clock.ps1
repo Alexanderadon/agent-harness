@@ -1,6 +1,6 @@
 # Часы хакатона. Запускать в отдельном окне PowerShell в 0:00 и не закрывать до конца.
-# .\hack-clock.ps1 -Start 13:30            (старт соревновательной части; по умолчанию текущее время)
-# .\hack-clock.ps1 -Start 13:30 -Hours 5 -SubmitMinutesBeforeClose 20
+# .\hack-clock.ps1 -Start 13:00            (старт соревновательной части; по умолчанию текущее время)
+# .\hack-clock.ps1 -Start 13:00 -Hours 5 -SubmitMinutesBeforeClose 20
 param(
   [string]$Start = (Get-Date).ToString("HH:mm"),
   [int]$Hours = 5,
