@@ -39,7 +39,7 @@
       .\install.ps1 -Role emina
       Проверка: строки "skill: ..." и "role (emina): ...".
   [ ] Проверка агента: cd C:\hack\lomra , запустить   codex --full-auto , написать   Я Эмина
-      Ответ: четыре строки, роль "капитан", твоё git-имя, ветка, команды task/progress/readme/testdata/audit/submit.
+      Ответ: четыре строки, роль "капитан", твоё git-имя, ветка, команды task/вопросы/ответы/progress/readme/testdata/audit/submit.
       Если Codex не видит скилл: первым сообщением вставить текст файла C:\hack\agent-harness\skills\captain\SKILL.md, потом  Я Эмина.
   [ ] Пробная команда в любом своём тестовом репозитории:  progress   -> строка в PROGRESS.md и пуш прошёл.
 
