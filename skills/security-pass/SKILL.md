@@ -5,7 +5,7 @@ description: 10-minute security and reliability pass before submission, mapped t
 
 # Security pass, 10 minutes, in this order
 
-1. Secrets: `git grep -nE "sk-[A-Za-z0-9]{10,}|BEGIN (RSA|OPENSSH)|AUTH_TOKEN=[^=]" -- . ':!*.example'` returns nothing. `.env*` in .gitignore, only `.env.example` tracked. No `NEXT_PUBLIC_` variable holds a key.
+1. Secrets: `git grep -nE "sk-[A-Za-z0-9]{10,}|BEGIN (RSA|OPENSSH)|AUTH_TOKEN=[^=]" -- . ':!*.example'` returns nothing. `.env*` in .gitignore, only `.env.example` tracked. No `NEXT_PUBLIC_` variable holds a key. `git ls-files .claude .codex .vercel` returns nothing (local tool residue stays out of the repo).
 2. SQL: every query goes through `execute({ sql, args })` with placeholders; `git grep -n "\${" -- lib/db.ts` shows no interpolated SQL.
 3. Tool inputs: every tool has `inputSchema` with enums for statuses, `.max()` on strings and numbers, id format checked; write tools verify the id exists before updating and return a clear error otherwise.
 4. Approval: every tool that changes data is listed in `toolApproval`; `git grep -n "toolApproval" lib/agent.ts` matches every write tool name.
