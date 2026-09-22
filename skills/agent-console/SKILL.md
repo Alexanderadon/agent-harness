@@ -24,3 +24,19 @@ Controls:
 States that must exist: empty table (seed missing), loading, API error (400/500 text shown in the panel), agent running (status === 'streaming'), done.
 
 Acceptance: the SPEC.md scenario runs by pressing Run once and approving once; the table changes visibly; Reset returns the seed.
+
+# Other forms (SPEC.md line "Форма"; see docs/WINNING-SHAPE.md)
+
+The panel, the trace rendering, the approval card, Reset, hasKey and the states above are identical for every form. Only the left column and the final-answer block change.
+
+Form B, document assistant:
+- Left: documents list from the db (title, source, chunk count); an upload control only if the task supplies files. Clicking a title opens the text in a drawer or below the list.
+- Right: the goal input is a question, prefilled with the control question from SPEC.md. The final answer renders citations: each citation is a small card (document title, chunk position, quoted fragment) taken from the search tool outputs that the answer references; render them under the text, in the order the answer cites them.
+- Highlight: documents cited in the current answer get the highlight instead of table rows.
+- Acceptance: the control question gets an answer with at least two citations that point at real chunks; Reset restores the seeded documents.
+
+Form C, generator:
+- Left: the input form (fields from SPEC.md, zod-validated on submit) or the seeded input records; below it the list of saved results (title, created_at) with a download link (JSON or Markdown).
+- Right: same panel. The approval card for the save tool renders the structured proposal field by field (title, findings as a list, recommendations as a list, category as a badge), not as raw JSON, because this card is the product.
+- After Approve: the result appears in the saved list with highlight; the final answer text is one sentence.
+- Acceptance: Run, one Approve, one row in the results list with every schema field filled; Reset clears saved results.

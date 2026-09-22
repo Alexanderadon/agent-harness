@@ -109,4 +109,42 @@ Rules:
 - Read tools execute; write tools go through toolApproval. Never fake a tool result. Record ids never appear in lib/ or app/ logic.
 - Default step limit 6. Rely on route `maxDuration = 60` for the time budget.
 - Model id via env. `createAgentUIStreamResponse` takes `uiMessages` (the README says `messages`; the d.ts is right). For a verify-only run pass `toolApproval: { <write>: 'approved' }` from the script, never from the app. NVIDIA fallback needs no extra package: lib/model.ts above. Never log or return key values; `hasModelKey()` answers yes/no only.
+
+# Forms (SPEC.md line "Форма"; docs/WINNING-SHAPE.md)
+
+The agent, route, client, tests and verify stay the same for every form; only the tools and the seed differ.
+
+Form B, document assistant. Schema: `documents(id, title, source)` and `chunks(id, doc_id, ord, body)` plus `CREATE VIRTUAL TABLE chunks_fts USING fts5(body, content='chunks', content_rowid='id')` (FTS5 is available in @libsql/client, verified with `MATCH` on Cyrillic text). Seed splits each document into paragraphs of 300–600 characters. Tools:
+
+```ts
+search_docs: tool({
+  description: 'Full-text search over the documents; returns fragments with document id and position',
+  inputSchema: z.object({ query: z.string().min(2).max(200), limit: z.number().int().min(1).max(10).default(5) }),
+  execute: async ({ query, limit }) => getDb().searchChunks(query, limit), // SELECT c.id, c.doc_id, d.title, c.ord, snippet(chunks_fts, 0, '[', ']', '…', 12) AS fragment FROM chunks_fts JOIN chunks c ON c.id = chunks_fts.rowid JOIN documents d ON d.id = c.doc_id WHERE chunks_fts MATCH ? ORDER BY rank LIMIT ?
+}),
+get_doc: tool({
+  description: 'Full text of one document',
+  inputSchema: z.object({ doc_id: z.string().max(40) }),
+  execute: async ({ doc_id }) => getDb().getDocument(doc_id),
+}),
+```
+Instructions add: answer only from tool results, cite as [title, fragment N], say "в документах нет ответа" when search returns nothing. The FTS query string must be sanitised before MATCH: keep letters, digits and spaces, join words with OR (a raw user string with quotes or `-` breaks the FTS parser). A write tool (`create_ticket`, `save_answer`) is added only if the task has an action, always behind `toolApproval`.
+
+Form C, generator. The result structure is the write tool's input schema, so the approval card shows the proposal field by field and Approve persists it:
+
+```ts
+save_result: tool({
+  description: 'Save the generated result (write action, needs approval)',
+  inputSchema: z.object({
+    title: z.string().min(3).max(120),
+    category: z.enum(['low', 'medium', 'high']),
+    findings: z.array(z.string().max(300)).min(1).max(8),
+    recommendations: z.array(z.string().max(300)).min(1).max(8),
+  }),
+  execute: async (input) => getDb().saveResult(input),
+}),
+```
+Instructions add: read the inputs with the read tools first, then call save_result exactly once with the complete structure; never invent numbers that are not in tool outputs. `generateObject({ model, schema, prompt })` and `output: Output.object({ schema })` on ToolLoopAgent exist in ai@7 (names verified in the d.ts) and may serve one non-loop analysis call; the loop itself stays on tools so the approval card and the trace remain the product.
+
+Verify per form: A checks a record status; B checks that the answer to the control question contains the expected fragment and cites document D; C checks one row in results with every field non-empty.
 - If a name above does not exist in node_modules/ai, open node_modules/ai/README.md and node_modules/ai/dist/index.d.ts and use the real name. Do not guess.
