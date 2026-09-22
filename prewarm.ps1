@@ -1,4 +1,4 @@
-# Прогрев ноутбука: один раз до хакатона. Ставит в кэш pnpm все пакеты, которые понадобятся в день,
+﻿# Прогрев ноутбука: один раз до хакатона. Ставит в кэш pnpm все пакеты, которые понадобятся в день,
 # и проверяет, что create-next-app и shadcn работают без вопросов. Папка после проверки удаляется.
 $ErrorActionPreference = "Stop"
 $tmp = Join-Path $env:TEMP "prewarm-next"
@@ -13,8 +13,8 @@ pnpm dlx shadcn@latest init -y -d
 pnpm dlx shadcn@latest add -y button card badge table skeleton input textarea scroll-area separator
 
 Write-Host "3/4 deps"
-pnpm add ai @ai-sdk/openai @ai-sdk/react @ai-sdk/openai-compatible zod @libsql/client lucide-react
-pnpm add -D vitest tsx @types/node
+pnpm add ai @ai-sdk/openai @ai-sdk/react zod @libsql/client lucide-react
+pnpm add -D vitest tsx "@types/node@^22"
 
 Write-Host "4/4 typecheck + build"
 pnpm exec tsc --noEmit

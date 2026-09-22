@@ -15,7 +15,7 @@ CLAUDE CODE НА НОУТБУКЕ · УСТАНОВКА И ПЕРЕНОС КОН
   [ ] Приложение Claude: https://claude.ai/download , войти аккаунтом с Max. Вкладка Code.
   [ ] CLI:  npm i -g @anthropic-ai/claude-code   ,  claude --version  , первый запуск -> вход тем же аккаунтом.
   [ ] Режим без подтверждений: в приложении выбрать режим разрешений "bypass"; в терминале  claude --dangerously-skip-permissions
-  [ ] cd C:\hack\agent-harness ; .\install.ps1 -Role alexander
+  [ ] pwsh -File C:/hack/agent-harness/install.ps1 -Role alexander
       Это создаёт C:\Users\<ты>\.claude\skills\* и дописывает роль в C:\Users\<ты>\.claude\CLAUDE.md
 
 ПЕРЕНОС КОНТЕКСТА, ТРИ ФАЙЛА С ФЛЕШКИ ИЛИ ИЗ ОБЛАКА
@@ -39,4 +39,5 @@ CLAUDE CODE НА НОУТБУКЕ · УСТАНОВКА И ПЕРЕНОС КОН
 
 ПРОВЕРКА, ЧТО ВСЁ ВСТАЛО
   [ ] В Claude Code набрать  /  -> в списке scaffold, hackathon-day, captain, ai-sdk-agent, agent-console, verify-script, deploy-first, design-pass, security-pass, readme-rubric
-  [ ] Написать  Я Александр  -> четыре строки: роль, git-имя, ветка, команды.
+  [ ] Написать  Я Александр  -> роль, git-имя, ветка, команды и отдельной строкой результат pull
+      ("git: pull ок, запись в .git работает").

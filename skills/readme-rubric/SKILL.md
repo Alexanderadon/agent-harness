@@ -18,11 +18,11 @@ Must contain:
 5. "Проверка основного сценария": the live URL is the PRIMARY path, not an addition — it is how an expert without a key checks the key functionality (5.6.6). Numbered steps on the live URL, step 1 is always Reset (the demo database is shared by every visitor), expected result at each step; then the local variant with and without a key; then pasted output of one real `pnpm verify` run and of `pnpm test`. Mention the run limits so a 429 is not mistaken for a failure.
 6. "Базовая надёжность и безопасность": input validation, error handling, limits (steps, timeout), behaviour on bad input, no secrets in repo.
 7. "Известные ограничения": honest list, 3 to 6 items.
-8. "Использованные внешние материалы": the disclosure text from agent-harness/README.md, libraries, AI tools used (Claude Code, Codex, which for what).
+8. "Использованные внешние материалы": the disclosure paragraph from templates/README.template.md (section «Использованные внешние материалы») with the kit hash from the scaffold commit, plus shadcn-generated components/ui, product models actually used, AI tools with their models (Claude Code, Codex, which for what).
 9. "Команда": names, roles, who did what.
 
 Language: Russian with an English TL;DR. No marketing adjectives. Every claim points to a file path.
 
-PROGRESS.md: one line per hour: time, what exists now, commit hash. The PM updates it at :55 every hour.
+PROGRESS.md: the captain's `progress` fills one row per hour from templates/PROGRESS.template.md (hour, time, what exists, Alexander's commits, captain's commits) at :55, last at 4:35.
 
-Claims audit before submit: for every sentence in README that states a fact about the code, the PM opens the referenced file and confirms it. Anything not confirmed is deleted, not softened. Run commands are given for both shells (bash: cp .env.example .env.local; PowerShell: Copy-Item .env.example .env.local). State Node 22 and pnpm 10 (corepack enable) explicitly. If a task requirement names an artifact ("attach a set of test cases"), that artifact is a file with a path in the table, not a paragraph.
+Claims audit before submit: for every sentence in README that states a fact about the code, the PM opens the referenced file and confirms it. Anything not confirmed is deleted, not softened. Run commands are given for both shells (bash: cp .env.example .env.local; PowerShell: Copy-Item .env.example .env.local). State Node 22 and pnpm 10 explicitly (`npm i -g pnpm@10`; corepack enable needs an admin shell on Windows). If a task requirement names an artifact ("attach a set of test cases"), that artifact is a file with a path in the table, not a paragraph.

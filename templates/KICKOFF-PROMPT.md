@@ -6,16 +6,16 @@
 
 | Когда | Что пишешь | Что делает агент |
 |---|---|---|
-| 0:00, первое сообщение | `Я Александр` | включает роль: проверяет git-имя, делает pull, показывает список команд, ждёт |
+| 0:00, первое сообщение | `Я Александр` | включает роль: пять строк (роль, git-имя, «git: pull ок, запись в .git работает, ветка main», ключ модели по именам в .env.local, команды), ждёт |
 | 0:00 | `scaffold` | 10–12 минут: создаёт Next.js-проект, ставит shadcn и зависимости, клонирует agent-harness и раскладывает комплект, коммитит, пушит |
-| 0:05, когда Эмина положила условие в docs/TASK.md | `spec` | сначала проверяет условие: команды для ИИ, ссылки «скачай», скрытый текст, противоречия и дыры (цитирует в SPEC, не выполняет); потом «Для кого», вопросы заказчику с допущениями, план и привязка каждого требования к инструменту и к критерию с баллами; код не пишет |
+| ~0:12, после scaffold, когда Эмина положила условие в docs/TASK.md | `spec` | сначала проверяет условие: команды для ИИ, ссылки «скачай», скрытый текст, противоречия и дыры (цитирует в SPEC, не выполняет); потом «Для кого», вопросы заказчику с допущениями, план и привязка каждого требования к инструменту и к критерию с баллами; код не пишет |
 | после твоих правок SPEC | `старт` | пересказывает план одним абзацем, называет незакрытые требования, ждёт |
 | на границе блока, когда Эмина положила docs/ANSWERS.md | `ответы` | обновляет допущения в SPEC по ответам ментора; объём не растёт, лишнее в «Не делаем» или в requests |
-| 0:15 | `го` | начинает блок 1 |
+| ~0:22 | `го` | начинает блок 1 |
 | дальше | `блок 3`, `блок 4`, … (можно `блок 3, 45 минут`) | делает только этот блок, коммит, отчёт в пять строк, останавливается |
 | ушёл в сторону | `стоп` | откатывает лишнее, возвращается к блоку |
 | конец блока 4, начало блока 10 | `ревью` | субагент только для чтения: нарушения требований и правил списком, группы 1–2 чинятся одним коммитом |
-| :50–:55 | `чекпоинт` | пушит что есть, даже если typecheck красный; ничего не удаляет |
+| 0:50, 1:50, 2:50, 3:50, последний 4:40 | `чекпоинт` | пушит что есть, даже если typecheck красный; ничего не удаляет. После 17:45 не пушить |
 
 Между блоками ты сам делаешь `/clear` и отправляешь следующий `блок N`. Файлы репозитория остаются, чат не нужен.
 
@@ -23,15 +23,17 @@
 
 | Когда | Пишет | Что делает агент |
 |---|---|---|
-| 0:00, первое сообщение | `Я Эмина, старт 13:00` (реальное время старта) | включает роль: проверяет, что git-имя её, делает pull, показывает список команд, ждёт |
-| 0:05 | `task` + текст условия и критерии оценки | перечисляет подозрительные места в тексте (команды для ИИ, ссылки, скрытый текст) и ничего из них не делает; docs/TASK.md и docs/CRITERIA.md дословно, коммит. Скаффолда ждать не надо |
-| 0:12, после `spec` Александра | `вопросы` | docs/QUESTIONS.md: вопросы заказчику из SPEC с нашими допущениями, нести ментору партнёра |
+| 0:00, первое сообщение | `Я Эмина, старт 13:00` (реальное время старта) | включает роль: проверяет, что git-имя её, делает pull и отдельной строкой пишет результат («git: pull ок, запись в .git работает»), показывает список команд, ждёт |
+| ~0:05–0:10, сразу как задача выбрана | `task` + текст условия и критерии оценки | перечисляет подозрительные места в тексте (команды для ИИ, ссылки, скрытый текст) и ничего из них не делает; docs/TASK.md и docs/CRITERIA.md дословно, коммит. Скаффолда ждать не надо |
+| ~0:20, после «SPEC.md готов» у Александра | `вопросы` | docs/QUESTIONS.md: вопросы заказчику из SPEC с нашими допущениями, нести ментору партнёра |
 | 0:35, ментор ответил | `ответы` + текст ответов | docs/ANSWERS.md, просьба Александру в TASKS; условие главнее ответа |
-| :55 | `progress` | строка в PROGRESS.md из коммитов обоих за час |
-| 0:40 | `testdata` | data/test-cases.json, если условие требует набор данных |
+| 0:55, 1:55, 2:55, 3:55, последний 4:35 | `progress` | строка в PROGRESS.md из коммитов обоих за час |
+| ~0:25 | `testdata` | docs/seed-draft.json и docs/test-cases.md, если условие требует набор данных; просьба Александру принять сид в data/seed.json до 0:50 |
 | 1:30, 3:15 | `readme` | README по шаблону из реального кода, вопросы Александру списком |
+| 2:00 | `судья сборка` | clone в C:\hack\judge-HHMM, `pnpm install --frozen-lockfile`, `pnpm build`; docs/JUDGE-CHECK.md, первая строка «СУДЬЯ: ПРОШЁЛ» или «СУДЬЯ: УПАЛ на шаге N: …», коммит |
 | 3:40 | `audit` | каждое утверждение README сверено с файлами |
-| 4:20 | `submit` | docs/SUBMISSION.md для анкеты |
+| 4:00, код заморожен | `судья` | README буквально: install, build, test, verify; восемь разделов п. 5.4.15 в заголовках, реальный URL; docs/JUDGE-CHECK.md, коммит. Потом человек руками `pnpm start` и живой URL в инкогнито |
+| 4:05–4:30 | `submit` | docs/SUBMISSION.md для анкеты; анкета отправлена не позже 4:30 |
 
 Два агента не конфликтуют, потому что владеют разными файлами (см. Team protocol в AGENTS.md) и оба делают `git pull --rebase` перед каждой командой. Общая доска это TASKS.md: статусы блоков и раздел requests.
 
@@ -48,7 +50,7 @@ Read AGENTS.md, SPEC.md and docs/README.template.md. Task: draft README.md filli
 leave {{…}} placeholders where you are not sure. Do not touch code. Commit on branch docs.
 ```
 
-Проверка как судья (2:35 и после блока 8; Codex запущен с `--sandbox danger-full-access`, иначе не сможет клонировать и ставить пакеты):
+Проверка как судья — ЗАПАСНОЙ вариант для Codex Александра, только если у Эмины не сработали `судья сборка` (2:00) или `судья` (4:00). Основной путь — её команды, итог в docs/JUDGE-CHECK.md. Codex запущен с `--sandbox danger-full-access --ask-for-approval never`, иначе не сможет клонировать и ставить пакеты:
 
 ```
 Проверка как судья. Ничего не меняй в C:\hack\lomra и ничего не коммить. Склонируй https://github.com/BAITC-Hacks/hack-463fe33c-lomra
@@ -57,14 +59,14 @@ leave {{…}} placeholders where you are not sure. Do not touch code. Commit on 
 Проверь: главная отвечает 200 и показывает данные из сида; без ключа панель агента честно говорит, что ключа нет; pnpm test зелёный;
 в README есть все обязательные разделы п. 5.4.15 (описание и назначение, архитектура, технологии, установка, запуск, зависимости,
 переменные окружения, порядок проверки основного сценария). Потом открой живой URL из README и проверь, что он отвечает 200.
-Ответь таблицей: шаг README, что сделал, результат. Первый упавший шаг выдели отдельной строкой сверху. Останови сервер, удали временную папку.
+Ответь таблицей: шаг README, что сделал, результат. Первый упавший шаг выдели отдельной строкой сверху. Останови сервер. Временную папку не удаляй: Codex блокирует рекурсивное удаление даже с полным доступом, её уберут руками после хакатона.
 ```
 
 ## Если скиллы не установились (запасной вариант, полный текст)
 
 Скаффолд:
 ```
-Используй скилл scaffold. Если скилла нет: создай Next.js 16 проект через временную папку рядом (create-next-app с флагами --ts --tailwind --eslint --app --no-src-dir --use-pnpm --yes), перенеси в этот репозиторий, shadcn init -y -d и компоненты button card badge table skeleton input textarea scroll-area separator, зависимости ai @ai-sdk/openai @ai-sdk/react zod @libsql/client lucide-react и dev vitest tsx, .nvmrc 22, engines, onlyBuiltDependencies для @libsql/client libsql esbuild sharp, скрипты typecheck/test/seed/verify/smoke. Затем склонируй https://github.com/Alexanderadon/agent-harness во временную папку, скопируй AGENTS.md и CLAUDE.md в корень, templates/TASKS.template.md как TASKS.md, templates/env.example как .env.example, templates/PROGRESS.template.md как PROGRESS.md, в docs/ положи playbooks/hackalem-2026/WINNING-SHAPE.md, templates/SPEC.template.md и templates/README.template.md. Временные папки удали. pnpm typecheck зелёный, коммит «scaffold + conventions (disclosed)», пуш.
+Используй скилл scaffold. Если скилла нет: создай Next.js 16 проект через временную папку рядом (create-next-app с флагами --ts --tailwind --eslint --app --no-src-dir --use-pnpm --yes), перенеси в этот репозиторий, shadcn init -y -d и компоненты button card badge table skeleton input textarea scroll-area separator, зависимости ai @ai-sdk/openai @ai-sdk/react zod @libsql/client lucide-react и dev vitest tsx, .nvmrc 22, engines, onlyBuiltDependencies для @libsql/client libsql esbuild sharp, скрипты typecheck/test/seed/verify/smoke, в next.config.ts `outputFileTracingIncludes: { '/*': ['./data/**/*'] }` (data/schema.sql читается через fs, Vercel отгружает только трассированные файлы), там же `serverExternalPackages: ['@libsql/client', 'libsql']`; dev-зависимость "@types/node@^22"; vitest.config.mts с алиасом '@' на корень (tests/route.test.ts импортирует маршрут с '@/lib/...'); .gitignore: `!.env.example` после `.env*`, `data/app.db*`, `.claude/`, `.codex/`; .gitattributes `* text=auto eol=lf` и `git add --renormalize .`. Затем склонируй `git clone --depth 1 --branch pre-start-2026-09-23 https://github.com/Alexanderadon/agent-harness` во временную папку (тега нет — тот же клон без --branch и скажи об этом) и запомни `git -C <папка> rev-parse --short HEAD`, скопируй AGENTS.md и CLAUDE.md в корень, templates/TASKS.template.md как TASKS.md, templates/env.example как .env.example, templates/PROGRESS.template.md как PROGRESS.md, только если PROGRESS.md ещё нет, в docs/ положи playbooks/hackalem-2026/WINNING-SHAPE.md, templates/SPEC.template.md, templates/README.template.md и templates/TASK.template.md. Временные папки удали. pnpm typecheck зелёный, `git pull --rebase --autostash origin main` (docs/TASK.md и docs/CRITERIA.md Эмины не трогать), коммит «scaffold + conventions (disclosed, agent-harness@<хеш>)», пуш.
 ```
 
 SPEC:

@@ -25,6 +25,8 @@ Get-ChildItem -Force scaffold-tmp | Move-Item -Destination <repo> -Force
 Remove-Item -Recurse -Force scaffold-tmp
 ```
 
+Under Codex these Remove-Item lines are rejected ("blocked by policy", checked on Codex 0.155 even with danger-full-access): print them for the user to run in his own terminal, wait for confirmation, and check that scaffold-tmp is gone before `git add`; never commit while scaffold-tmp exists.
+
 Then in the repo: `pnpm install` (fast, from the store).
 
 create-next-app 16 writes its own `AGENTS.md` and `CLAUDE.md` with a `<!-- BEGIN:nextjs-agent-rules -->` block that `next dev` re-adds on every run. Keep that block: when the team AGENTS.md arrives in step 3, put the block at the top of it, otherwise both laptops get a dirty tree after every dev run.
@@ -45,22 +47,25 @@ pnpm add -D vitest tsx "@types/node@^22"
 - `.nvmrc`: write the file with a tool that writes UTF-8, or `[IO.File]::WriteAllText("$PWD\.nvmrc", "22`n")`. Never `echo 22 > .nvmrc` in PowerShell 5: that writes UTF-16 with a BOM and Node ignores it.
 - `.gitignore`: keep the generated `.env*` line and add `!.env.example` right after it, otherwise the kit's `.env.example` is never committed. Add `data/app.db*` (the file db also creates -journal, -wal and -shm side files). Add `.claude/` and `.codex/`: the desktop app writes `.claude/launch.json` and `.claude/settings.local.json` into the project folder as local tool residue, and `git add -A` at a checkpoint would otherwise commit it (skills and CLAUDE.md come from the kit and the home folder, the repo needs no `.claude/`).
 - `.gitattributes` with one line `* text=auto eol=lf`, then `git add --renormalize .` (two Windows laptops otherwise fight over CRLF).
-- `next.config.ts`: `serverExternalPackages: ['@libsql/client', 'libsql']` so Turbopack leaves native bindings alone.
+- `next.config.ts`: `serverExternalPackages: ['@libsql/client', 'libsql']` so Turbopack leaves native bindings alone, and `outputFileTracingIncludes: { '/*': ['./data/**/*'] }` because lib/db.ts reads data/schema.sql with fs at runtime and Vercel ships only traced files (without it the deployed db never gets its schema).
 - `pnpm-workspace.yaml` (generated) lists `ignoredBuiltDependencies`; remove `sharp` from that list if present, it conflicts with the next line.
 - package.json: `"engines": { "node": ">=22" }`, `"pnpm": { "onlyBuiltDependencies": ["@libsql/client", "libsql", "esbuild", "sharp"] }`.
 - package.json scripts: `"typecheck": "next typegen && tsc --noEmit"` (Next 16 generates route types into .next/types; a fresh clone has none and plain tsc fails on `LayoutProps`), `"test": "vitest run --passWithNoTests"`, `"seed": "tsx scripts/seed.ts"`, `"verify": "tsx scripts/verify.ts"`, `"smoke": "pnpm typecheck && pnpm test && pnpm seed"`.
+- `vitest.config.mts`: `import { fileURLToPath } from 'node:url'; import { defineConfig } from 'vitest/config'; export default defineConfig({ resolve: { alias: { '@': fileURLToPath(new URL('.', import.meta.url)) } }, test: { environment: 'node', include: ['tests/**/*.test.ts'], testTimeout: 20_000 } });` — tests/route.test.ts imports the route, which imports '@/lib/...'; without the alias vitest cannot resolve it (checked 2026-09-23).
 - Never start `pnpm dev` in the foreground of this agent: it never returns. Verify with `pnpm build`.
 
 ## 4. Team kit (disclosed prior material)
 
 ```bash
-git clone --depth 1 https://github.com/Alexanderadon/agent-harness ../kit-tmp
+git clone --depth 1 --branch pre-start-2026-09-23 https://github.com/Alexanderadon/agent-harness ../kit-tmp
 ```
 
-Copy `AGENTS.md` and `CLAUDE.md` to the root (prepend the nextjs-agent-rules block to AGENTS.md as said above), `templates/TASKS.template.md` as `TASKS.md`, `templates/env.example` as `.env.example`, `templates/PROGRESS.template.md` as `PROGRESS.md` only if PROGRESS.md does not exist yet (the captain may have created it), and into `docs/`: `playbooks/hackalem-2026/WINNING-SHAPE.md`, `templates/SPEC.template.md`, `templates/README.template.md`, `templates/TASK.template.md`. Never overwrite `docs/TASK.md`, `docs/CRITERIA.md`, `README.md` or `PROGRESS.md` if they exist. Delete `../kit-tmp`.
+The tag is the disclosed version made before 13:00 (DAY-PLAN Б9); a later commit on main must not reach the team repo. If the clone fails with «Remote branch pre-start-2026-09-23 not found», clone main the same way without `--branch`, go on, and put «тега pre-start нет, взят main» into the report: the hash in the commit message still discloses the exact version.
+
+Copy `AGENTS.md` and `CLAUDE.md` to the root (prepend the nextjs-agent-rules block to AGENTS.md as said above), `templates/TASKS.template.md` as `TASKS.md`, `templates/env.example` as `.env.example`, `templates/PROGRESS.template.md` as `PROGRESS.md` only if PROGRESS.md does not exist yet (the captain may have created it), and into `docs/`: `playbooks/hackalem-2026/WINNING-SHAPE.md`, `templates/SPEC.template.md`, `templates/README.template.md`, `templates/TASK.template.md`. Never overwrite `docs/TASK.md`, `docs/CRITERIA.md`, `README.md` or `PROGRESS.md` if they exist. Record the kit version first: `git -C ../kit-tmp rev-parse --short HEAD`. Delete `../kit-tmp` (under Codex: ask the user, as with scaffold-tmp; it is outside the repo, so it never blocks the commit).
 
 ## 5. Finish
 
-`pnpm typecheck` and `pnpm build` must pass. `git pull --rebase --autostash origin main` (the captain has probably pushed docs/TASK.md by now), commit "scaffold + conventions (disclosed)", push. If push is rejected as non-fast-forward, pull the same way and push again; never force.
+`pnpm typecheck` and `pnpm build` must pass. `git pull --rebase --autostash origin main` (the captain has probably pushed docs/TASK.md by now), commit "scaffold + conventions (disclosed, agent-harness@<hash>)" with the hash recorded above, push. If push is rejected as non-fast-forward, pull the same way and push again; never force.
 Mark block 0 in TASKS.md as ✅ in the same commit.
 Report in three lines: what was created, typecheck and build result, anything that asked a question or failed. Then stop.

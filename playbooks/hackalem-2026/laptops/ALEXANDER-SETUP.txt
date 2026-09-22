@@ -16,8 +16,9 @@
   [ ] winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
       Проверка в новом окне:   pwsh -v   -> 7.x
   [ГРАБЛИ] Встроенный PowerShell 5.1 читает .ps1 без BOM как ANSI, а install.ps1 в UTF-8 с кириллицей.
-  Результат: "The string is missing the terminator" и скиллы НЕ ставятся. Все скрипты комплекта
-  (install.ps1, prewarm.ps1) запускать через pwsh, см. ШАГ 7.
+  Результат: "The string is missing the terminator" и скиллы НЕ ставятся. Теперь все .ps1 комплекта
+  (install.ps1, prewarm.ps1, hack-clock.ps1) сохранены в UTF-8 с BOM и читаются и в 5.1, но запускать
+  их всё равно через  pwsh -File , см. ШАГ 7.
 
 ШАГ 1. NODE И PNPM
   [ ] Node.js 22 LTS: https://nodejs.org (кнопка LTS), установщик, всё по умолчанию.
@@ -67,6 +68,9 @@
   "cannot open '.git/FETCH_HEAD': Permission denied", при этом git status работает.
   Правами доступа на папку и writable_roots НЕ лечится — проверено, только сменой режима песочницы.
   Это ломает запасной путь "Claude упёрся в лимит -> продолжаем на Codex": без флага он не сможет коммитить.
+  Поэтому install.ps1 (ШАГ 7) для обеих ролей сам пишет в C:\Users\<ты>\.codex\config.toml
+  sandbox_mode = "danger-full-access" и approval_policy = "never" и печатает эти две строки.
+  Флаги в команде запуска всё равно оставлять.
   [ ] Один раз, окно администратора:
         git config --system --add safe.directory C:/hack/lomra
         git config --system --add safe.directory C:/hack/agent-harness
@@ -85,7 +89,8 @@
   [ ] cd C:\hack
       git clone https://github.com/Alexanderadon/agent-harness
       pwsh -File C:/hack/agent-harness/install.ps1 -Role alexander
-      Проверка: в выводе десять строк "skill: ..." и "role (alexander): ...".
+      Проверка: в выводе десять строк "skill: ...", "role (alexander): ..." и две строки Codex:
+      sandbox_mode = "danger-full-access" и approval_policy = "never".
   [ ] pwsh -File C:/hack/agent-harness/prewarm.ps1     (5–10 минут, пакеты дня в кэш, проверка скаффолда и сборки)
       Проверка: последняя строка "Прогрев прошёл".
   [ГРАБЛИ] Именно  pwsh -File , а не  .\install.ps1  — причина в ШАГ 0.5. Это же относится к повторному
@@ -93,7 +98,10 @@
   там должно читаться "Роль этого ноутбука на хакатоне: Александр, код". Если видно "Р РѕР»СЊ" — запускали
   не через pwsh. (Смотреть в VS Code: Get-Content в PowerShell 5.1 покажет кракозябры даже у верного файла.)
   [ ] Проверка агента: открыть Claude Code в C:\hack\agent-harness, написать   Я Александр
-      Ответ: пять строк, роль "код", твоё git-имя, ветка, ключ модели (по имени переменной), список команд.
+      Ответ: роль "код", твоё git-имя, ветка, ключ модели (по имени переменной), список команд и отдельной
+      строкой результат pull: "git: pull ок, запись в .git работает". Иное:
+        "git ЗАБЛОКИРОВАН песочницей..."   -> codex перезапустить с --sandbox danger-full-access --ask-for-approval never
+        "GitHub видит чужой аккаунт..."    -> cmdkey, ШАГ 8
 
 ШАГ 8. РЕПОЗИТОРИЙ КОМАНДЫ
   [ ] cd C:\hack
@@ -112,17 +120,63 @@
   [ГРАБЛИ] При чужом аккаунте приватный репозиторий отдаёт именно "Repository not found", а не 403.
   Выглядит как несуществующая ссылка, хотя это отказ в доступе.
 
-ШАГ 9. АККАУНТЫ И КЛЮЧИ
-  [ ] https://platform.openai.com : своя организация, ключ создан и лежит в менеджере паролей. Баланс — на НЕДЕЛЮ,
-      не на день: этот ключ живёт в Vercel до Demo Day 29.09, эксперты проверяют 24–28.09 (перк-ключ туда нельзя,
-      его могут отозвать). Прогон gpt-6-sol ~$0.08, приложение пускает не больше 100 запусков в сутки.
-      Settings > Limits: месячный лимит расходов, покрывающий неделю публичного URL.
-  [ ] https://app.turso.tech : ОБЯЗАТЕЛЬНО. Вход через GitHub, Create Database, скопировать URL, Generate Token.
-      Оба в менеджер паролей. Без Turso демо на Vercel ломается: у каждого экземпляра функции своя база в памяти,
+ШАГ 9. АККАУНТЫ (заранее только регистрация и вход; базы, проект и ключи — утром 23.09, раздел УТРО)
+  [ ] https://platform.openai.com : своя организация (не перк). Утром в ней создаётся проект lomra-demo.
+  [ ] https://app.turso.tech : ОБЯЗАТЕЛЬНО. Что это: облачная база SQLite (libSQL), на ней живёт наш живой URL.
+      Регистрация: Sign up -> Continue with GitHub (аккаунт Alexanderadon), бесплатный план, карта не нужна.
+      Зачем: без Turso демо на Vercel ломается — у каждого экземпляра функции своя база в памяти,
       Approve пишет в одну, страница читает из другой — эксперт видит «строка не изменилась», это недопуск по п. 5.4.16.
-  [ ] https://vercel.com : в дашборде Add New > Project можно не создавать, проект создастся командой в день.
-      Обязательно после первого деплоя: Settings > Deployment Protection > Vercel Authentication выключить.
+      Сами базы и токены — утром (УТРО, Б2).
+  [ ] https://vercel.com : вход (vercel whoami -> fistin103). Проект lomra создаётся утром (УТРО, Б6).
   [ ] https://build.nvidia.com : аккаунт есть, ключ сохранён. Только резерв.
+
+УТРО 23.09 · ВСЁ ДО 12:30, СТРОГО ПО ПОРЯДКУ
+  Значения ключей и токенов вводятся только в запросы vercel env add и в менеджер паролей:
+  не в чат агенту, не в файлы репозитория, TURSO_* никогда в .env.local (verify и seed сбросили бы боевую базу).
+  [ ] Б2 TURSO. app.turso.tech -> Create Database, две базы:  lomra-probe  (утренний тест)  и  lomra  (день).
+      Для каждой: скопировать URL (libsql://...), Generate Token: Read & Write, Expiration: Never
+      (токен на 7 дней умрёт посреди проверки 24–28.09). URL и токены в менеджер паролей. Базу lomra до 13:00 не трогать.
+  [ ] Б3 OPENAI. platform.openai.com -> своя организация -> проект  lomra-demo  -> ключ проекта в менеджер паролей.
+      Billing: предоплата $15–20 (минимум $10), Auto recharge ВЫКЛ. Эта предоплата — жёсткий потолок расходов живого URL
+      до 29.09 (прогон gpt-6-sol ~$0.08; суточный предохранитель приложения AGENT_RUNS_PER_DAY=300 — только от злоупотребления).
+      Этот ключ только для Vercel production. Перк-ключ туда нельзя никогда: его могут отозвать после события.
+      Settings > Organization > General: если требует верификацию — пройти сейчас (документ вводишь сам).
+  [ ] Б6 VERCEL ЗАРАНЕЕ.
+        New-Item -ItemType Directory -Force C:\hack\vercel-pre ; cd C:\hack\vercel-pre
+        vercel project add lomra
+        vercel link --yes --project lomra
+        vercel env add OPENAI_API_KEY production        (ключ lomra-demo)
+        vercel env add TURSO_DATABASE_URL production    (URL базы lomra)
+        vercel env add TURSO_AUTH_TOKEN production      (токен базы lomra)
+        vercel env add AGENT_MODEL production           (gpt-6-sol; окончательно выбирается на деплое 2:50)
+      Дашборд -> lomra -> Settings: Framework = Next.js; Deployment Protection > Vercel Authentication ВЫКЛ.
+      Проверка:  vercel env ls production  -> четыре имени.
+  [ ] Б4 БОЕВОЙ ПРОГОН на копии rehearsal (оригинал C:\hack\rehearsal не трогать; lomra не затрагивается):
+        robocopy C:\hack\rehearsal C:\hack\probe /E /XD node_modules .next .vercel /XF .env.local
+        cd C:\hack\probe ; pnpm install
+        vercel project add rehearsal-probe ; vercel link --yes --project rehearsal-probe
+        vercel env add для OPENAI_API_KEY (lomra-demo), AGENT_MODEL, TURSO_DATABASE_URL и TURSO_AUTH_TOKEN (база lomra-probe)
+        Measure-Command { vercel --prod --yes }        -> записать длительность сборки
+      Телефон в инкогнито: нет стены входа Vercel; Reset -> Run -> карточка Approve -> Approve -> два обновления
+      и второе устройство: строка всё ещё изменена (значит, Turso работает).
+      Run падает с ошибкой про verification или stream -> новая организация требует верификацию для стриминга:
+      верифицировать организацию или другой ключ/модель.
+      Засечь секунды Run (цель: весь сценарий < 30 с). AGENT_REASONING в rehearsal нет — его уровни
+      замеряются в день на первом живом Run кода дня (1:40).
+      vercel logs: нет ENOENT schema.sql и ошибок @libsql.
+      В конце:  vercel project rm rehearsal-probe   (публичный URL с ключом не оставлять).
+  [ ] Б7 параллельно с Б4: ноутбук Эмины по EMINA-SETUP.txt.
+  [ ] Б8 ЧАСЫ:  pwsh -NoProfile -File C:\hack\agent-harness\hack-clock.ps1 -Start 13:00 -Once
+      печатает состояние и выходит. С -ShiftMinutes <N> проверить: 13:05 -> Блок 0; 17:05 -> КОД ЗАМОРОЖЕН;
+      после 17:40 крика «чекпоинт» нет.
+  [ ] Б9 ТЕГ, до 12:30:
+        cd C:\hack\agent-harness
+        git status --short                  -> пусто; иначе сначала закоммитить и запушить
+        git fetch; git rev-parse HEAD; git rev-parse origin/main   -> два одинаковых хеша
+        git tag pre-start-2026-09-23
+        git push origin pre-start-2026-09-23
+      Зачем: scaffold клонирует комплект именно по этому тегу. Тег на незапушенном коммите — scaffold завтра возьмёт не то.
+      После тега в agent-harness не коммитить. Ошибку скилла, найденную днём, чинить только в ~/.claude/skills.
 
 ШАГ 10. ЖЕЛЕЗО И СВЯЗЬ
   [ ] LAN-переходник USB-A -> RJ-45 проверен с кабелем.
@@ -134,18 +188,24 @@
 
 В ДЕНЬ, 23.09 · СТАРТ 13:00, ОТСЕЧКА 18:00
   Итоговая версия — содержимое репозитория на 18:00, независимо от момента блокировки платформы (Положение 5.4.13).
-  Последний пуш планировать на 17:45.
+  Последний чекпоинт-пуш в 17:40 (4:40 от старта), сверка хеша на GitHub в 17:45.
+  После 17:45 не пушить никогда.
 
-  12:30  ключ API из кабинета -> C:\hack\lomra\.env.local (две строки: OPENAI_API_KEY=..., AGENT_MODEL=gpt-6-luna)
-         В Vercel НЕ этот ключ, а СВОЙ (ШАГ 9):  vercel env add OPENAI_API_KEY production
-         До старта окно всего 30 минут, не час: всё, что можно, сделать заранее.
+  до 12:30  раздел УТРО выше целиком, тег pre-start-2026-09-23 запушен.
+  12:30  перк-ключ из кабинета -> C:\hack\lomra\.env.local (две строки: OPENAI_API_KEY=..., AGENT_MODEL=gpt-6-luna)
+         В Vercel его НЕ класть никогда: там с утра ключ lomra-demo (Б6).
+         До старта окно всего 30 минут, не час: всё, что можно, сделано утром.
   12:35  codex: выйти из своего аккаунта, войти в перк-аккаунт
+  12:40  вторая сессия Claude в C:\hack\agent-harness: тексты задач от Эмины через Telegram
+         (у неё в C:\hack\pre\ALL-TASKS.md, вне репозитория команды), рейтинг по PICK-TASK.md. Только рейтинг.
   12:45  Claude Code открыт в C:\hack\lomra, второе окно PowerShell там же.
          Можно (правилами разрешено) заранее написать  Я Александр  и дать агенту прочитать
          CONTEXT.md, DAY-PLAN.md и guide/02. Нельзя: создавать файлы проекта, коммитить, пушить —
          соревновательная часть начинается в 13:00 (п. 5.3.1), метаданные файлов проверяются (п. 5.4.7).
-  13:00  во втором окне:  C:\hack\agent-harness\hack-clock.ps1 -Start 13:00
-         агенту:  scaffold      (скаффолд идёт 9–12 минут, не 3–5)
+  12:50  часы отдельной вкладкой терминала (Ctrl+Shift+T):
+           pwsh -NoProfile -File C:\hack\agent-harness\hack-clock.ps1 -Start 13:00
+  13:00  агенту:  scaffold      (скаффолд идёт 9–12 минут, не 3–5)
+         Эмина делает task сразу, как выбрана задача, скаффолд не ждёт.
   Дальше по страницам "02 Александр" и "06 Как писать агенту" в Obsidian или в playbooks\hackalem-2026\guide.
 
 
@@ -155,7 +215,9 @@
   pnpm -v показывает 12.x                                 -> corepack prepare pnpm@10.34.5 --activate
   git: "Repository not found" на репозитории команды      -> Windows помнит чужой GitHub (ШАГ 8)
   claude в терминале: "Not logged in"                     -> claude auth login, вход в приложение не считается (ШАГ 3)
-  codex: cannot open '.git/FETCH_HEAD': Permission denied -> codex --sandbox danger-full-access (ШАГ 4)
+  codex: cannot open '.git/FETCH_HEAD': Permission denied -> codex --sandbox danger-full-access --ask-for-approval never (ШАГ 4)
   в git-bash "This: command not found"                     -> npm rm -g node (ШАГ 1)
   npm i -g npm@latest: notsup, требует Node >= 22.22.2     -> npm i -g npm@11
   в CLAUDE.md кракозябры "Р РѕР»СЊ"                        -> install.ps1 запускали не через pwsh, повторить
+  /api/health на Vercel: не "db":"turso","db_ok":true      -> vercel env ls production, новый токен Turso (Expiration: Never)
+  живой Run: ошибка про verification / stream              -> верифицировать организацию OpenAI или другой ключ/модель (Б4)

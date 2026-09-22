@@ -3,16 +3,18 @@
 # model намеренно не задан: Codex берёт лучшую модель тарифа сам (на Pro это gpt-5.6/gpt-6 линейка).
 # Задать вручную только если /model в Codex показывает что-то слабее, чем gpt-6-sol.
 model_reasoning_effort = "medium"
-approval_policy = "on-failure"
-sandbox_mode = "workspace-write"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
 
-# pnpm install и vercel требуют сеть: без этой строки workspace-write её режет.
+# Действует только если sandbox_mode вернуть в workspace-write: pnpm install и vercel требуют сеть.
 [sandbox_workspace_write]
 network_access = true
 
+# Профиль с глубоким рассуждением, по желанию: codex --profile agent --sandbox danger-full-access --ask-for-approval never
 [profiles.agent]
 model_reasoning_effort = "high"
 
-# Запуск в день: `codex --full-auto` (правки и команды в рабочей папке без вопросов, песочница остаётся).
-# Полный обход `codex --dangerously-bypass-approvals-and-sandbox` только если песочница Windows блокирует pnpm или сеть.
+# Запуск в день: codex --sandbox danger-full-access --ask-for-approval never. значения выше уже такие; install.ps1 для обеих ролей дополнительно заменяет старые строки (страховка):
+# на Windows песочница workspace-write выполняет команды от отдельного пользователя и блокирует запись в .git (проверено 23.09).
+# Эквивалент: codex --dangerously-bypass-approvals-and-sandbox.
 # Страховка при любом режиме: коммит после каждого блока, .env* никогда не печатать и не коммитить.
