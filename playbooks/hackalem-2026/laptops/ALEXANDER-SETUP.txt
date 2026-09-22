@@ -84,4 +84,4 @@
   13:00  Claude Code открыт в C:\hack\lomra, второе окно PowerShell там же
   13:30  во втором окне:  .\..\agent-harness\hack-clock.ps1 -Start 13:30   (реальное время старта)
          агенту:  Я Александр     потом:  scaffold
-  Дальше по странице "02 Александр" в Obsidian или в playbooks\hackalem-2026\guide.
+  Дальше по страницам "02 Александр" и "06 Как писать агенту" в Obsidian или в playbooks\hackalem-2026\guide.

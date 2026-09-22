@@ -8,7 +8,7 @@ CLAUDE CODE НА НОУТБУКЕ · УСТАНОВКА И ПЕРЕНОС КОН
 ЧТО ДЕЙСТВИТЕЛЬНО НУЖНО НА НОУТБУКЕ
   1. Скиллы и роль          -> ставит install.ps1 из agent-harness (ШАГ 7 в ALEXANDER-SETUP.txt).
   2. Контекст решений       -> файл playbooks\hackalem-2026\CONTEXT.md в agent-harness: там всё, что решено.
-  3. Эта переписка          -> файл hackalem-chat-2026-09-21.md в папке "ноуты настройка хакатон" (экспорт сессии).
+  3. Эта переписка          -> файл hackalem-chat-2026-09-22.md в папке "ноуты настройка хакатон" (экспорт сессии).
   4. Память Claude о хакатоне -> файл claude-memory-project_hackalem.md в той же папке.
 
 УСТАНОВКА
@@ -23,7 +23,7 @@ CLAUDE CODE НА НОУТБУКЕ · УСТАНОВКА И ПЕРЕНОС КОН
   [ ] Скопировать её на ноутбук в C:\hack\setup\
   [ ] Открыть Claude Code в C:\hack\agent-harness и написать одно сообщение:
 
-      Прочитай playbooks/hackalem-2026/CONTEXT.md и C:/hack/setup/hackalem-chat-2026-09-21.md.
+      Прочитай playbooks/hackalem-2026/CONTEXT.md и C:/hack/setup/hackalem-chat-2026-09-22.md.
       Это контекст подготовки к хакатону, в нём всё решено. Ничего не делай, скажи в пяти строках, что понял.
 
   [ ] Память (по желанию): после первого запуска claude в папке C:\hack\lomra появится
