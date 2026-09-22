@@ -46,9 +46,12 @@ Run pnpm seed. Commit on branch seed.
 ```
 
 ```
-Read AGENTS.md, SPEC.md and docs/README.template.md. Task: draft README.md filling every section from the current code,
-leave {{…}} placeholders where you are not sure. Do not touch code. Commit on branch docs.
+Read AGENTS.md, SPEC.md, lib/db.ts and lib/tools.ts. Task: write tests/tools.test.ts only. Each tool runs against a fresh
+createMemoryDb(): the read tools return exactly the seeded problem rows from SPEC.md, the write tool changes exactly one row
+and returns a clear error for an unknown id. Do not touch any other file. Run pnpm test until green. Commit on branch tests.
 ```
+
+README здесь не пишется никогда: им владеет агент Эмины (`readme`).
 
 Проверка как судья — ЗАПАСНОЙ вариант для Codex Александра, только если у Эмины не сработали `судья сборка` (2:00) или `судья` (4:00). Основной путь — её команды, итог в docs/JUDGE-CHECK.md. Codex запущен с `--sandbox danger-full-access --ask-for-approval never`, иначе не сможет клонировать и ставить пакеты:
 
