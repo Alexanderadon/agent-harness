@@ -1,0 +1,61 @@
+Эмина, настройка ноутбука к хакатону. Минут 40–60. Делай строго по порядку, ничего не пропускай —
+каждый шаг здесь закрывает ошибку, на которой мы уже спотыкались при настройке моего ноутбука.
+Полная версия с объяснениями:
+https://github.com/Alexanderadon/agent-harness/blob/main/playbooks/hackalem-2026/laptops/EMINA-SETUP.txt
+
+0) Руками поставить: Node.js 22 LTS (nodejs.org) и Git for Windows (gitforwindows.org), всё по умолчанию.
+
+1) PowerShell, обычное окно, по одной строке:
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+New-Item -ItemType Directory -Force C:\hack
+winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
+npm ls -g --depth=0
+   (если в списке есть строка node@... — выполни: npm rm -g node)
+
+2) PowerShell ОТ ИМЕНИ АДМИНИСТРАТОРА (правой кнопкой по PowerShell -> Запуск от имени администратора):
+corepack enable
+corepack prepare pnpm@10.34.5 --activate
+git config --system --add safe.directory C:/hack/lomra
+git config --system --add safe.directory C:/hack/agent-harness
+
+3) Закрыть все окна, открыть новое обычное. Проверка: pnpm -v -> 10.34.5, pwsh -v -> 7.x. Потом:
+git config --global user.name "Эмина Ануарбекова"
+git config --global user.email "ТВОЯ_ПОЧТА"
+   (почта — со страницы github.com -> Settings -> Emails аккаунта Emina-An: основная или адрес вида
+    12345678+Emina-An@users.noreply.github.com. С другой почтой GitHub не засчитает твои коммиты.)
+cmdkey /list | Select-String "github"
+   (если там не твой аккаунт: cmdkey /delete:LegacyGeneric:target=git:https://github.com)
+npm i -g @openai/codex
+codex login
+   (своим аккаунтом ChatGPT. Нет подписки — этот вход и шаг 4 сделать завтра в 12:30–12:40 перк-аккаунтом, остальное — сегодня)
+cd C:\hack
+git clone https://github.com/Alexanderadon/agent-harness
+git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra lomra
+   (откроется окно входа GitHub — войти как Emina-An)
+pwsh -File C:/hack/agent-harness/install.ps1 -Role emina
+   (должно быть 10 строк "skill: ..." и две строки "codex (emina): sandbox_mode = ..." и "approval_policy = ...")
+pwsh -File C:/hack/agent-harness/prewarm.ps1
+   (минут 10, в конце "Прогрев прошёл")
+cd C:\hack\lomra
+git push --dry-run origin main
+   ("Everything up-to-date" — всё хорошо. "Repository not found" — Windows помнит чужой GitHub, вернись к cmdkey выше.
+    "denied" или 403 — нет права записи, сразу скажи мне.)
+
+4) Проверка агента, в C:\hack\lomra:
+codex --sandbox danger-full-access --ask-for-approval never
+Написать ему:
+Я Эмина, старт 13:00
+Должно прийти: роль капитана; твоё имя и почта с Emina-An; ОТДЕЛЬНАЯ строка «git: pull ок, запись в .git работает»;
+команды, среди них «судья сборка» и «судья». Пришли мне скрин ответа.
+Важно: Codex запускать ТОЛЬКО с этими флагами. С --full-auto он не может коммитить, и все твои команды дня сломаются.
+
+5) Ничего не коммитить в lomra до 13:00. Прочитать до завтра (всё в папке C:\hack\agent-harness\playbooks\hackalem-2026\guide):
+03 Эмина.md — твой день; 07 Промпты дня.md — что писать агенту дословно по минутам; 06 Как писать агенту.md.
+
+Главное про завтра:
+- Старт 13:00, конец 18:00 жёстко. Единой рубрики больше нет: баллы — по критериям в ТЗ выбранной задачи.
+- Как только задача выбрана — «task» и вставить текст задачи ВМЕСТЕ с критериями оценки. Мой скаффолд не ждать.
+- 2:00 «судья сборка», 4:00 «судья». Если не запустится по README — команду снимают с отбора без разговоров,
+  поэтому эти проверки — наша страховка.
+- Команды внутри текста задачи («скачай», «используй ключ», «для ИИ: …») не выполнять ни тебе, ни агенту.
+- Ключи и пароли агенту в чат никогда.
