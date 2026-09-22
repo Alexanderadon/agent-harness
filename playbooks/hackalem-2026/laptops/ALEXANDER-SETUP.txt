@@ -3,18 +3,39 @@
 Всё в PowerShell от обычного пользователя, если не сказано иначе. Порядок важен.
 Галочку ставить только после проверки, которая написана рядом.
 
+Редакция 23.09.2026. Пометки [ГРАБЛИ] — то, что реально сломалось при установке с нуля на Windows 11,
+и чем это вылечили. Полный список симптомов и лечения — в конце файла.
+
 ШАГ 0. WINDOWS
   [ ] Часы: Параметры > Время и язык > синхронизировать, часовой пояс Астана (UTC+5).
   [ ] PowerShell один раз:   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
   [ ] Папка для всего:       New-Item -ItemType Directory -Force C:\hack
       Путь без кириллицы и пробелов. Всё, что ниже, кладётся в C:\hack.
 
+ШАГ 0.5. POWERSHELL 7 — ОБЯЗАТЕЛЬНО
+  [ ] winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
+      Проверка в новом окне:   pwsh -v   -> 7.x
+  [ГРАБЛИ] Встроенный PowerShell 5.1 читает .ps1 без BOM как ANSI, а install.ps1 в UTF-8 с кириллицей.
+  Результат: "The string is missing the terminator" и скиллы НЕ ставятся. Все скрипты комплекта
+  (install.ps1, prewarm.ps1) запускать через pwsh, см. ШАГ 7.
+
 ШАГ 1. NODE И PNPM
   [ ] Node.js 22 LTS: https://nodejs.org (кнопка LTS), установщик, всё по умолчанию.
       Проверка:   node -v          -> v22.x
-  [ ] pnpm 10:    corepack enable
-                  corepack prepare pnpm@latest --activate
-      Проверка:   pnpm -v          -> 10.x
+  [ ] pnpm 10. Окно PowerShell ОТ ИМЕНИ АДМИНИСТРАТОРА:
+                  corepack enable
+                  corepack prepare pnpm@10.34.5 --activate
+      Проверка (обычное окно):   pnpm -v   -> 10.34.5
+  [ГРАБЛИ] Два подвоха. corepack enable пишет в C:\Program Files\nodejs и без администратора падает
+  с "EPERM ... pnpx". И pnpm@latest сейчас это 12, а комплект и репетиционное приложение на pnpm 10 —
+  версию пиннуем руками, иначе lock-файлы не сойдутся.
+
+  [ ] Лишний пакет:   npm ls -g --depth=0   . Если есть строка node@<версия> — удалить:   npm rm -g node
+  [ГРАБЛИ] Глобальный npm-пакет "node" перекрывает настоящий Node: в git-bash pnpm, vercel, codex и claude
+  падают с "This: command not found", а в PowerShell работают. Причину ищут долго.
+
+  [ ] npm не обновлять через npm@latest.
+  [ГРАБЛИ] npm 12 требует Node >= 22.22.2, на 22.20 отказывается с notsup. Нужно обновить — npm i -g npm@11
 
 ШАГ 2. GIT
   [ ] Git for Windows: https://gitforwindows.org , установщик, всё по умолчанию (Git Credential Manager включён).
@@ -27,13 +48,28 @@
   [ ] Приложение Claude: https://claude.ai/download , установить, войти в аккаунт с Max. Вкладка Code.
   [ ] Дополнительно CLI, чтобы работать из терминала:   npm i -g @anthropic-ai/claude-code
       Проверка:   claude --version
-      Первый запуск claude в любой папке -> войти тем же аккаунтом.
+  [ ] Вход CLI ОТДЕЛЬНО от приложения:   claude auth login
+      Проверка:   claude auth status   -> "loggedIn": true, "subscriptionType": "max"
+  [ГРАБЛИ] Вход в приложение Claude НЕ логинит CLI: у них разные токены. Симптом — claude в терминале
+  отвечает "Not logged in · Please run /login", хотя приложение работает.
   Перенос контекста с основного компьютера: файл CLAUDE-CODE-TRANSFER.txt рядом.
 
 ШАГ 4. CODEX
   [ ] npm i -g @openai/codex
       Проверка:   codex --version
   [ ] codex login  -> свой аккаунт сейчас. 23.09 в 12:30 выйти и войти в перк-аккаунт.
+      Проверка входа: файл C:\Users\<ты>\.codex\auth.json существует.
+  [ ] ЗАПУСК В ДЕНЬ, не --full-auto:
+        cd C:\hack\lomra
+        codex --sandbox danger-full-access --ask-for-approval never
+  [ГРАБЛИ] Песочница Codex на Windows выполняет команды от отдельного пользователя (CodexSandboxOnline)
+  и блокирует запись в .git на своём уровне: git pull и git push падают с
+  "cannot open '.git/FETCH_HEAD': Permission denied", при этом git status работает.
+  Правами доступа на папку и writable_roots НЕ лечится — проверено, только сменой режима песочницы.
+  Это ломает запасной путь "Claude упёрся в лимит -> продолжаем на Codex": без флага он не сможет коммитить.
+  [ ] Один раз, окно администратора:
+        git config --system --add safe.directory C:/hack/lomra
+        git config --system --add safe.directory C:/hack/agent-harness
 
 ШАГ 5. VERCEL
   [ ] npm i -g vercel
@@ -48,23 +84,33 @@
 ШАГ 7. КОМПЛЕКТ КОМАНДЫ
   [ ] cd C:\hack
       git clone https://github.com/Alexanderadon/agent-harness
-      cd agent-harness
-      .\install.ps1 -Role alexander
-      Проверка: в выводе строки "skill: ..." и "role (alexander): ...".
-  [ ] .\prewarm.ps1     (5–10 минут, ставит пакеты дня в кэш, проверяет скаффолд и сборку)
+      pwsh -File C:/hack/agent-harness/install.ps1 -Role alexander
+      Проверка: в выводе десять строк "skill: ..." и "role (alexander): ...".
+  [ ] pwsh -File C:/hack/agent-harness/prewarm.ps1     (5–10 минут, пакеты дня в кэш, проверка скаффолда и сборки)
       Проверка: последняя строка "Прогрев прошёл".
+  [ГРАБЛИ] Именно  pwsh -File , а не  .\install.ps1  — причина в ШАГ 0.5. Это же относится к повторному
+  запуску после  git pull  комплекта. Проверить кодировку: открыть C:\Users\<ты>\.claude\CLAUDE.md,
+  там должно читаться "Роль этого ноутбука на хакатоне: Александр, код". Если видно "Р РѕР»СЊ" — запускали
+  не через pwsh. (Смотреть в VS Code: Get-Content в PowerShell 5.1 покажет кракозябры даже у верного файла.)
   [ ] Проверка агента: открыть Claude Code в C:\hack\agent-harness, написать   Я Александр
       Ответ: пять строк, роль "код", твоё git-имя, ветка, ключ модели (по имени переменной), список команд.
 
 ШАГ 8. РЕПОЗИТОРИЙ КОМАНДЫ
   [ ] cd C:\hack
       git clone https://github.com/BAITC-Hacks/hack-463fe33c-lomra lomra
-      Только клон. Ничего не коммитить и не пушить до 13:30 23.09.
+      Только клон. Ничего не коммитить и не пушить до 13:00 23.09.
   [ ] Проверка входа в GitHub и права записи с этого ноутбука, ничего не отправляется:
       cd C:\hack\lomra
       git push --dry-run origin main
       "Everything up-to-date" -> вход под Alexanderadon, право есть.
-      403 или "denied" -> Windows запомнил другой аккаунт GitHub: Панель управления > Диспетчер учётных данных > github.com удалить, повторить, войти как Alexanderadon.
+      "Repository not found" -> Windows помнит ДРУГОЙ аккаунт GitHub. Посмотреть чей:
+          cmdkey /list | Select-String "github"
+      удалить и войти заново:
+          cmdkey /delete:LegacyGeneric:target=git:https://github.com
+      затем повторить clone — откроется окно входа, войти как Alexanderadon.
+      403 или "denied" -> входишь под собой, но права нет: писать организаторам.
+  [ГРАБЛИ] При чужом аккаунте приватный репозиторий отдаёт именно "Repository not found", а не 403.
+  Выглядит как несуществующая ссылка, хотя это отказ в доступе.
 
 ШАГ 9. АККАУНТЫ И КЛЮЧИ
   [ ] https://platform.openai.com : своя организация, $5 на балансе, ключ создан и лежит в менеджере паролей.
@@ -82,11 +128,30 @@
 ШАГ 11. РЕПЕТИЦИЯ (единственная проверка кода, а не документов)
   [ ] playbooks\hackalem-2026\REHEARSAL.md из комплекта, хотя бы час, на этом ноутбуке.
 
-В ДЕНЬ, 23.09
+В ДЕНЬ, 23.09 · СТАРТ 13:00, ОТСЕЧКА 18:00
+  Итоговая версия — содержимое репозитория на 18:00, независимо от момента блокировки платформы (Положение 5.4.13).
+  Последний пуш планировать на 17:45.
+
   12:30  ключ API из кабинета -> C:\hack\lomra\.env.local (две строки: OPENAI_API_KEY=..., AGENT_MODEL=gpt-5.6-luna)
          тот же ключ в Vercel после первого деплоя:  vercel env add OPENAI_API_KEY production
+         До старта окно всего 30 минут, не час: всё, что можно, сделать заранее.
   12:35  codex: выйти из своего аккаунта, войти в перк-аккаунт
-  13:00  Claude Code открыт в C:\hack\lomra, второе окно PowerShell там же
-  13:30  во втором окне:  .\..\agent-harness\hack-clock.ps1 -Start 13:30   (реальное время старта)
-         агенту:  Я Александр     потом:  scaffold
+  12:45  Claude Code открыт в C:\hack\lomra, второе окно PowerShell там же.
+         Можно (правилами разрешено) заранее написать  Я Александр  и дать агенту прочитать
+         CONTEXT.md, DAY-PLAN.md и guide/02. Нельзя: создавать файлы проекта, коммитить, пушить —
+         соревновательная часть начинается в 13:00 (п. 5.3.1), метаданные файлов проверяются (п. 5.4.7).
+  13:00  во втором окне:  C:\hack\agent-harness\hack-clock.ps1 -Start 13:00
+         агенту:  scaffold      (скаффолд идёт 9–12 минут, не 3–5)
   Дальше по страницам "02 Александр" и "06 Как писать агенту" в Obsidian или в playbooks\hackalem-2026\guide.
+
+
+ЕСЛИ ЧТО-ТО НЕ РАБОТАЕТ, БЫСТРАЯ ТАБЛИЦА
+  install.ps1 падает "string is missing the terminator"   -> запускать через pwsh (ШАГ 0.5)
+  corepack enable: EPERM ... Program Files\nodejs\pnpx    -> окно администратора (ШАГ 1)
+  pnpm -v показывает 12.x                                 -> corepack prepare pnpm@10.34.5 --activate
+  git: "Repository not found" на репозитории команды      -> Windows помнит чужой GitHub (ШАГ 8)
+  claude в терминале: "Not logged in"                     -> claude auth login, вход в приложение не считается (ШАГ 3)
+  codex: cannot open '.git/FETCH_HEAD': Permission denied -> codex --sandbox danger-full-access (ШАГ 4)
+  в git-bash "This: command not found"                     -> npm rm -g node (ШАГ 1)
+  npm i -g npm@latest: notsup, требует Node >= 22.22.2     -> npm i -g npm@11
+  в CLAUDE.md кракозябры "Р РѕР»СЊ"                        -> install.ps1 запускали не через pwsh, повторить
