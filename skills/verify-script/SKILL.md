@@ -8,7 +8,7 @@ description: Create scripts/verify.ts and the pnpm scripts (verify, smoke, seed)
 scripts/verify.ts (run with tsx):
 1. Restore the seed first (same code path as POST /api/reset), so a second verify does not trip over orders from the first.
 2. Print the seed summary (row counts per table).
-3. If OPENAI_API_KEY is missing: print "OPENAI_API_KEY not set — skipping live run; pnpm test covers the loop with a mock model" and exit 0.
+3. If `hasModelKey()` from lib/model.ts is false: print "No model key (OPENAI_API_KEY or NVIDIA_API_KEY) — skipping live run; pnpm test covers the loop with a mock model" and exit 0.
 4. Run the SPEC.md scenario programmatically: call the same agent from lib/agent.ts with the demo goal, auto-approve write tools for this script only (an override passed by the script, never read by the app), print each step: tool name, input, output summary, ms.
 5. Assert the expected state change in the db (from SPEC.md). Print PASS or FAIL with the diff. Exit code 0/1.
 6. Restore the seed at the end (same code path as POST /api/reset).

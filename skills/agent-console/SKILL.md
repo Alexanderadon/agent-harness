@@ -19,7 +19,7 @@ Each card carries a step number chip. Monospace for JSON, sans for text.
 
 Controls:
 - Reset demo: POST /api/reset, then refetch the table. Always present, top right.
-- No OPENAI_API_KEY: the page passes `hasKey={Boolean(process.env.OPENAI_API_KEY)}` from the server into the panel (client code cannot read env); the panel shows "Set OPENAI_API_KEY in .env.local to run the agent" and Run is disabled. Everything else works.
+- No model key: the page passes `hasKey={hasModelKey()}` (lib/model.ts, true for OPENAI_API_KEY or NVIDIA_API_KEY) from the server into the panel (client code cannot read env); the panel shows "Set OPENAI_API_KEY in .env.local to run the agent" and Run is disabled. Everything else works.
 
 States that must exist: empty table (seed missing), loading, API error (400/500 text shown in the panel), agent running (status === 'streaming'), done.
 
