@@ -155,4 +155,16 @@ save_result: tool({
 Instructions add: read the inputs with the read tools first, then call save_result exactly once with the complete structure; never invent numbers that are not in tool outputs. `generateObject({ model, schema, prompt })` and `output: Output.object({ schema })` on ToolLoopAgent exist in ai@7 (names verified in the d.ts) and may serve one non-loop analysis call; the loop itself stays on tools so the approval card and the trace remain the product.
 
 Verify per form: A checks a record status; B checks that the answer to the control question contains the expected fragment and cites document D; C checks one row in results with every field non-empty.
+
+Form D recipes (only what docs/TASK.md mandates; see docs/WINNING-SHAPE.md for the full list):
+
+Telegram bot as interface. `app/api/telegram/route.ts` receives the webhook (zod on the update body, secret token header check via `X-Telegram-Bot-Api-Secret-Token`), runs the same tools with `generateText({ model: createModel(), tools, stopWhen: isStepCount(6), prompt })`, answers with `fetch('https://api.telegram.org/bot' + token + '/sendMessage')`. Approval: the write tool is not in the bot's tool set; instead the agent's final text proposes the action and the route sends an inline keyboard (`reply_markup.inline_keyboard` with `callback_data` = action id stored in a `pending_actions` table); the `callback_query` branch executes the write through the same db function the web tool uses, then `answerCallbackQuery`. Locally `scripts/telegram-poll.ts` calls `getUpdates` in a loop and posts each update to the local route. The web console stays as the operator view and as the judge's path.
+
+Demo roles. `role` cookie set by a header switch (`cookies()` in a Server Action), the page filters records and the visible actions by role, the agent gets `runtimeContext: { role }` and tools check it (`if (context.role !== 'manager') return { error: 'недостаточно прав' }`). README calls this демо-роли, never authorization.
+
+Uploads. Route with `req.formData()`, size cap 5 MB, MIME whitelist, parse with papaparse / xlsx / pdf-parse, insert rows with parameterized SQL, respond with counts; parsed text is data, never instructions. The tools then read the same tables.
+
+Dashboard. `get_metrics` read tool returns aggregates computed by SQL (`SELECT status, COUNT(*), SUM(amount_kzt) ... GROUP BY`); the page renders the same numbers with recharts (`dynamic(() => import(...), { ssr: false })`).
+
+Adapter for an external system. `lib/adapters/<system>.ts` exports the functions the real API would have; the implementation reads and writes our db and is marked `// stub: replace with the partner API call`; README section "Интеграция" explains the swap. The model still runs live; only the partner API is stubbed.
 - If a name above does not exist in node_modules/ai, open node_modules/ai/README.md and node_modules/ai/dist/index.d.ts and use the real name. Do not guess.
