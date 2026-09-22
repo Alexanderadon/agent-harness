@@ -15,7 +15,10 @@
 ШАГ 2. GIT ПОД СВОИМ ИМЕНЕМ (это важно: коммиты должны быть твои)
   [ ] Git for Windows: https://gitforwindows.org , установщик по умолчанию.
   [ ] git config --global user.name "Эмина Ануарбекова"
-      git config --global user.email "почта твоего аккаунта GitHub"   (именно та, что в Settings > Emails на github.com, или <логин>@users.noreply.github.com; иначе коммиты не засчитаются твоему профилю)
+      git config --global user.email "почта твоего аккаунта GitHub"
+      Твой аккаунт GitHub: Emina-An. Почту взять на github.com > Settings > Emails: либо основная почта аккаунта, либо
+      служебный адрес вида 12345678+Emina-An@users.noreply.github.com, который показан там же (цифры свои, не выдумывать).
+      С любой другой почтой GitHub не засчитает коммиты твоему профилю, а вклад участника проверяют по профилю.
   [ ] Первый вход: любой git push в свой тестовый репозиторий на GitHub, в окне войти своим аккаунтом.
       Проверка: git config --global --list -> твои имя и почта.
 
