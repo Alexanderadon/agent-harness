@@ -76,7 +76,15 @@ import { createAgent } from '@/lib/agent';
 import { hasModelKey } from '@/lib/model';
 export const maxDuration = 60;
 const Body = z.object({ messages: z.array(z.any()).max(50) });
+const hits = new Map<string, number[]>(); // per-instance limiter: enough to stop a browser loop from burning the key; documented as basic in README
+function allow(ip: string, limit = 10, windowMs = 60_000) {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < windowMs);
+  hits.set(ip, [...recent, now]);
+  return recent.length < limit;
+}
 export async function POST(req: Request) {
+  if (!allow(req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'local')) return Response.json({ error: 'too many runs, wait a minute' }, { status: 429 });
   if (!hasModelKey()) return Response.json({ error: 'no model key: set OPENAI_API_KEY or NVIDIA_API_KEY' }, { status: 503 });
   const parsed = Body.safeParse(await req.json());
   if (!parsed.success) return Response.json({ error: 'invalid body' }, { status: 400 });
