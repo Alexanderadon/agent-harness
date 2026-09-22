@@ -19,6 +19,7 @@ Each card carries a step number chip. Monospace for JSON, sans for text.
 
 Controls:
 - Reset demo: POST /api/reset, then refetch the table. Always present, top right.
+- "Already changed" banner. The deployed demo has ONE shared database for every visitor, and it stays public for a week: an expert may arrive after someone else already approved everything, the agent finds nothing to do, and the product looks broken. Track it: data/schema.sql gets `CREATE TABLE IF NOT EXISTS demo_state (key TEXT PRIMARY KEY, value TEXT NOT NULL)`; every write tool, after a successful write, runs `INSERT OR REPLACE INTO demo_state (key, value) VALUES ('dirty', '1')`; the reset batch in seedDb runs `DELETE FROM demo_state`. The page (Server Component) reads the flag and, when set, shows one line above the table: «Данные уже изменены предыдущим запуском. Нажмите Reset, чтобы проверить сценарий с начала.» with the Reset button next to it. README step 1 of the check is Reset for the same reason.
 - No model key: the page passes `hasKey={hasModelKey()}` (lib/model.ts, true for OPENAI_API_KEY or NVIDIA_API_KEY) from the server into the panel (client code cannot read env); the panel shows "Set OPENAI_API_KEY in .env.local to run the agent" and Run is disabled. Everything else works.
 
 States that must exist: empty table (seed missing), loading, API error (400/500 text shown in the panel), agent running (status === 'streaming'), done.

@@ -55,6 +55,14 @@ export const tools = {
   }),
 };
 
+// Reasoning depth from env, like the model id. Default 'low': six sequential steps must fit the route's 55 s timeout.
+// On the first live run measure each level and keep the highest one that finishes the whole scenario under 30 s.
+const EFFORTS = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'] as const;
+function reasoningEffort(): (typeof EFFORTS)[number] {
+  const value = process.env.AGENT_REASONING ?? 'low';
+  return (EFFORTS as readonly string[]).includes(value) ? (value as (typeof EFFORTS)[number]) : 'low';
+}
+
 export function createAgent() {
   return new ToolLoopAgent({
     model: createModel(),
@@ -62,6 +70,7 @@ export function createAgent() {
     tools,
     stopWhen: isStepCount(6),
     toolApproval: { update_status: 'user-approval' },
+    providerOptions: { openai: { reasoningEffort: reasoningEffort() } }, // ignored by the NVIDIA provider, harmless there
     onStepEnd: ({ stepNumber, toolCalls }) => console.log('step', stepNumber, toolCalls.length),
   });
 }
@@ -74,23 +83,44 @@ import { createAgentUIStreamResponse } from 'ai';
 import { z } from 'zod';
 import { createAgent } from '@/lib/agent';
 import { hasModelKey } from '@/lib/model';
+import { getDb } from '@/lib/db';
+import { takeRun } from '@/lib/limits';
 export const maxDuration = 60;
 const Body = z.object({ messages: z.array(z.any()).max(50) });
-const hits = new Map<string, number[]>(); // per-instance limiter: enough to stop a browser loop from burning the key; documented as basic in README
-function allow(ip: string, limit = 10, windowMs = 60_000) {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < windowMs);
-  hits.set(ip, [...recent, now]);
-  return recent.length < limit;
-}
 export async function POST(req: Request) {
-  if (!allow(req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'local')) return Response.json({ error: 'too many runs, wait a minute' }, { status: 429 });
   if (!hasModelKey()) return Response.json({ error: 'no model key: set OPENAI_API_KEY or NVIDIA_API_KEY' }, { status: 503 });
   const parsed = Body.safeParse(await req.json());
   if (!parsed.success) return Response.json({ error: 'invalid body' }, { status: 400 });
+  // Count only a new goal. After Approve, useChat posts again with an assistant message last: that is the same run.
+  if (parsed.data.messages.at(-1)?.role === 'user') {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
+    const verdict = await takeRun(await getDb(), ip);
+    if (!verdict.ok) return Response.json({ error: verdict.reason }, { status: 429 });
+  }
   return createAgentUIStreamResponse({ agent: createAgent(), uiMessages: parsed.data.messages });
 }
 ```
+
+Run limits (lib/limits.ts). REQUIRED, not optional: the deployed URL stays public for a week, experts check it on 24–28.09 and at Demo Day on 29.09, and anyone who finds it spends our key. An in-memory Map does not work here: every serverless instance has its own copy. The counter lives in the same db as the data, so on Vercel with Turso it is shared by all instances.
+
+```ts
+import type { Client } from '@libsql/client';
+const PER_IP_HOUR = Number(process.env.AGENT_RUNS_PER_IP_HOUR ?? 10);
+const PER_DAY = Number(process.env.AGENT_RUNS_PER_DAY ?? 100);
+/** Active only on Vercel: local development is never limited. */
+export async function takeRun(db: Client, ip: string): Promise<{ ok: true } | { ok: false; reason: string }> {
+  if (!process.env.VERCEL) return { ok: true };
+  const now = Date.now();
+  const hour = await db.execute({ sql: 'SELECT COUNT(*) AS n FROM agent_runs WHERE ip = ? AND at > ?', args: [ip, now - 3_600_000] });
+  if (Number(hour.rows[0]?.n ?? 0) >= PER_IP_HOUR) return { ok: false, reason: 'Лимит запусков агента с этого адреса на час исчерпан. Данные и Reset работают.' };
+  const day = await db.execute({ sql: 'SELECT COUNT(*) AS n FROM agent_runs WHERE at > ?', args: [now - 86_400_000] });
+  if (Number(day.rows[0]?.n ?? 0) >= PER_DAY) return { ok: false, reason: 'Дневной лимит запусков демо исчерпан. Данные и Reset работают, агент снова доступен через сутки.' };
+  await db.execute({ sql: 'INSERT INTO agent_runs (ip, at) VALUES (?, ?)', args: [ip, now] });
+  return { ok: true };
+}
+```
+
+In data/schema.sql: `CREATE TABLE IF NOT EXISTS agent_runs (ip TEXT NOT NULL, at INTEGER NOT NULL); CREATE INDEX IF NOT EXISTS agent_runs_at ON agent_runs(at);`. The reset path (seedDb) must NOT delete from agent_runs, otherwise Reset lifts the limit. The panel shows the 429 text as a normal message, not as a crash. Acceptance for the block that adds it: `git grep -n "takeRun" app/api/chat/route.ts` matches, `git grep -n "agent_runs" lib/db.ts` shows it is absent from the reset batch, and tests/limits.test.ts passes: set `process.env.VERCEL = '1'` in the test (restore it in afterEach), take a fresh `createMemoryDb()`, call `takeRun(db, '1.2.3.4')` ten times and expect `ok: true`, the eleventh expects `ok: false`; a different ip still gets `ok: true`. A spend limit on the OpenAI account is still the last line of defence; the limiter decides who gets the budget.
 
 Client (components/agent-panel.tsx):
 

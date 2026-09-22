@@ -57,7 +57,7 @@ pnpm add -D vitest tsx "@types/node@^22"
 git clone --depth 1 https://github.com/Alexanderadon/agent-harness ../kit-tmp
 ```
 
-Copy `AGENTS.md` and `CLAUDE.md` to the root (prepend the nextjs-agent-rules block to AGENTS.md as said above), `templates/TASKS.template.md` as `TASKS.md`, `templates/env.example` as `.env.example`, `templates/PROGRESS.template.md` as `PROGRESS.md` only if PROGRESS.md does not exist yet (the captain may have created it), and into `docs/`: `playbooks/hackalem-2026/WINNING-SHAPE.md`, `templates/SPEC.template.md`, `templates/README.template.md`, `templates/TASK.template.md`. Never overwrite `docs/TASK.md`, `README.md` or `PROGRESS.md` if they exist. Delete `../kit-tmp`.
+Copy `AGENTS.md` and `CLAUDE.md` to the root (prepend the nextjs-agent-rules block to AGENTS.md as said above), `templates/TASKS.template.md` as `TASKS.md`, `templates/env.example` as `.env.example`, `templates/PROGRESS.template.md` as `PROGRESS.md` only if PROGRESS.md does not exist yet (the captain may have created it), and into `docs/`: `playbooks/hackalem-2026/WINNING-SHAPE.md`, `templates/SPEC.template.md`, `templates/README.template.md`, `templates/TASK.template.md`. Never overwrite `docs/TASK.md`, `docs/CRITERIA.md`, `README.md` or `PROGRESS.md` if they exist. Delete `../kit-tmp`.
 
 ## 5. Finish
 
