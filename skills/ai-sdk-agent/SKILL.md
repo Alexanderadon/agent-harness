@@ -12,7 +12,7 @@ Model (lib/model.ts). One helper picks the provider from env; nothing else in th
 ```ts
 import { createOpenAI, openai } from '@ai-sdk/openai';
 import type { LanguageModel } from 'ai';
-export const DEFAULT_MODEL = 'gpt-5.6-terra';
+export const DEFAULT_MODEL = 'gpt-6-sol';
 export const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1';
 export function modelSource(): 'openai' | 'nvidia' | null {
   if (process.env.OPENAI_API_KEY) return 'openai';
@@ -111,7 +111,7 @@ Structured final answer when the task needs a typed result: `output: Output.obje
 
 Tests (tests/agent.test.ts): `import { MockLanguageModelV4 } from 'ai/test'`. Pass `doGenerate` as an array; every item needs `content`, `finishReason: { unified, raw: undefined }`, `usage: { inputTokens: { total: 0, noCache: 0, cacheRead: 0, cacheWrite: 0 }, outputTokens: { total: 0, text: 0, reasoning: 0 } }` and `warnings: []` (the last two are mandatory, the loop throws without them). First item: `content: [{ type: 'tool-call', toolCallId, toolName, input: JSON.stringify(args) }]`, `finishReason.unified: 'tool-calls'`; second: `content: [{ type: 'text', text }]`, `unified: 'stop'`. Build a ToolLoopAgent with that model and the real tools against a seeded :memory: db; assert the db changed, and assert that without approval the write tool did not run. To call a tool directly in tests: `tool.execute(input, { toolCallId, messages: [], context: {} })`; `context` is required in v7. Mocks live only in tests.
 
-Models (OpenAI lineup as of 2026-09-21, per 1M tokens in/out): gpt-5.6-luna $0.20/$1.20, gpt-5.6-terra $2/$12, gpt-5.6-sol $4/$20, gpt-6-astra $10/$50. A 6-step run is roughly 30k input + 2k output tokens: luna ≈ $0.01, terra ≈ $0.09, astra ≈ $0.40. Iterate on luna, ship on terra, measure latency in rehearsal; the loop must finish under 30 s. If the task has one hard analysis step, call it once with generateText and AGENT_MODEL_DEEP (gpt-6-astra) outside the loop; never put astra inside the loop.
+Models (OpenAI lineup checked 2026-09-23 on developers.openai.com, per 1M tokens in/out): gpt-6-luna $0.10/$0.50, gpt-6-sol $2/$10, gpt-6-astra $10/$50. Previous generation, fallback only: gpt-5.6-luna $0.20/$1.20, gpt-5.6-terra $2/$12, gpt-5.6-sol $4/$20. A 6-step run is roughly 30k input + 2k output tokens: gpt-6-luna ≈ $0.004, gpt-6-sol ≈ $0.08, gpt-6-astra ≈ $0.40. Iterate on gpt-6-luna, ship on gpt-6-sol (same price tier as gpt-5.6-terra, newer generation, built for agentic workflows). NO model has been run live with this code yet: all rehearsals ran without a key. The first run with a real key is the test: the full scenario must finish under 30 s and the approval card must appear. If gpt-6-sol fails either check, set AGENT_MODEL=gpt-5.6-terra in env and move on; the code does not change. If the task has one hard analysis step, call it once with generateText and AGENT_MODEL_DEEP (gpt-6-astra) outside the loop; never put astra inside the loop: 5x the price of sol on a public URL, and its reasoning cannot be turned off, so the loop risks the route's 55 s timeout.
 
 Rules:
 - Read tools execute; write tools go through toolApproval. Never fake a tool result. Record ids never appear in lib/ or app/ logic.

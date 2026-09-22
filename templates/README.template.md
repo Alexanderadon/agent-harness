@@ -32,7 +32,7 @@ flowchart LR
 - `{{read_tool_2}}` — читает {{что}}.
 - `{{write_tool}}` — меняет {{что}}; требует подтверждения пользователя (toolApproval).
 
-Модель: `AGENT_MODEL` из env (по умолчанию `gpt-5.6-terra`), провайдер `@ai-sdk/openai`. Лимит 6 шагов на запуск, таймаут маршрута 60 с.
+Модель: `AGENT_MODEL` из env (по умолчанию `gpt-6-sol`), провайдер `@ai-sdk/openai`. Лимит 6 шагов на запуск, таймаут маршрута 60 с.
 Заготовленных или закэшированных ответов модели в приложении нет: каждый запуск вызывает живую модель.
 
 Стек: Next.js 16, TypeScript, Tailwind v4, shadcn/ui, Vercel AI SDK v7, zod, @libsql/client, vitest.
@@ -49,7 +49,7 @@ flowchart LR
 |---|---|---|
 | `OPENAI_API_KEY` | для агента | вызовы модели; без ключа приложение работает в режиме просмотра данных |
 | `NVIDIA_API_KEY` | вместо `OPENAI_API_KEY` | тот же код через OpenAI-совместимый эндпоинт NVIDIA; тогда `AGENT_MODEL` обязателен |
-| `AGENT_MODEL` | нет | модель, по умолчанию `gpt-5.6-terra`; для NVIDIA id модели с build.nvidia.com |
+| `AGENT_MODEL` | нет | модель, по умолчанию `gpt-6-sol`; для NVIDIA id модели с build.nvidia.com |
 | `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | нет | облачная база для развёрнутой версии; локально не нужны |
 
 **Установка.**
