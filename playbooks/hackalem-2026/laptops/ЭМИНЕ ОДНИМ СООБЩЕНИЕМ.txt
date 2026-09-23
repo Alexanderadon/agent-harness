@@ -41,6 +41,11 @@ git push --dry-run origin main
    ("Everything up-to-date" — всё хорошо. "Repository not found" — Windows помнит чужой GitHub, вернись к cmdkey выше.
     "denied" или 403 — нет права записи, сразу скажи мне.)
 
+3а) Проверка всего разом, одной командой:
+pwsh -NoProfile -File C:\hack\agent-harness\check-laptop.ps1 -Role emina
+   Каждая строка — ОК, НЕТ (сразу с командой исправления) или ?? (глянуть глазами). Внизу ИТОГ.
+   Есть НЕТ — исправить сверху вниз и запустить снова, пока не будет «ИТОГ: ГОТОВО». Пришли мне скрин итога.
+
 4) Проверка агента, в C:\hack\lomra:
 codex --sandbox danger-full-access --ask-for-approval never
 Написать ему:
