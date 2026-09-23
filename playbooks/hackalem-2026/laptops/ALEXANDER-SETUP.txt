@@ -123,7 +123,8 @@
 ШАГ 9. АККАУНТЫ (заранее только регистрация и вход; базы, проект и ключи — утром 23.09, раздел УТРО)
   [ ] https://platform.openai.com : своя организация (не перк). Утром в ней создаётся проект lomra-demo.
   [ ] https://app.turso.tech : ОБЯЗАТЕЛЬНО. Что это: облачная база SQLite (libSQL), на ней живёт наш живой URL.
-      Регистрация: Sign up -> Continue with GitHub (аккаунт Alexanderadon), бесплатный план, карта не нужна.
+      Отдельная регистрация не обязательна: базу можно создать из Vercel (Marketplace -> Turso Cloud, Б2 путь A).
+      Если напрямую: Sign up -> Continue with GitHub (аккаунт Alexanderadon), бесплатный план, карта не нужна.
       Зачем: без Turso демо на Vercel ломается — у каждого экземпляра функции своя база в памяти,
       Approve пишет в одну, страница читает из другой — эксперт видит «строка не изменилась», это недопуск по п. 5.4.16.
       Сами базы и токены — утром (УТРО, Б2).
@@ -133,9 +134,19 @@
 УТРО 23.09 · ВСЁ ДО 12:30, СТРОГО ПО ПОРЯДКУ
   Значения ключей и токенов вводятся только в запросы vercel env add и в менеджер паролей:
   не в чат агенту, не в файлы репозитория, TURSO_* никогда в .env.local (verify и seed сбросили бы боевую базу).
-  [ ] Б2 TURSO. app.turso.tech -> Create Database, две базы:  lomra-probe  (утренний тест)  и  lomra  (день).
-      Для каждой: скопировать URL (libsql://...), Generate Token: Read & Write, Expiration: Never
-      (токен на 7 дней умрёт посреди проверки 24–28.09). URL и токены в менеджер паролей. Базу lomra до 13:00 не трогать.
+  [ ] Б2 TURSO — облачная SQLite для живого URL. Две базы:  lomra-probe  (утренний тест)  и  lomra  (день). Делается ПОСЛЕ
+      создания проектов Vercel (Б6 и первая строка Б4), потому что база сразу подключается к проекту.
+      Путь A (без нового аккаунта, рекомендую): vercel.com -> Marketplace -> Turso Cloud -> Install (условия принимаешь сам,
+        бесплатный план $0, счёт через Vercel fistin103) -> Create Database -> Connect Project:
+        lomra-probe -> проект rehearsal-probe, lomra -> проект lomra; галочка ТОЛЬКО Production;
+        поле Custom Prefix ОЧИСТИТЬ (бывает заполнено, например STORAGE: тогда имена переменных другие и база молча
+        не подключится). Проверка:  vercel env ls production  -> ровно TURSO_DATABASE_URL и TURSO_AUTH_TOKEN, без префикса.
+        Тогда строки vercel env add TURSO_* в Б6 и Б4 пропустить (иначе будет конфликт имён).
+      Путь B (если A не пошёл): app.turso.tech -> Sign in with GitHub (НЕ passkey: окно Windows «ключ доступа» — Отмена)
+        -> Create Database; для каждой скопировать URL (libsql://...), Generate Token: Read & Write, Expiration: Never
+        (токен на 7 дней умрёт посреди проверки 24–28.09). URL и токены в менеджер паролей, дальше vercel env add в Б6 и Б4.
+      В обоих путях: движок libSQL (не новый Turso — в нём нет FTS5); регион AWS US East (Virginia) — рядом с Vercel iad1.
+      Базу lomra до 13:00 не трогать. Никогда не запускать  turso db tokens invalidate  (убивает токены обеих баз).
   [ ] Б3 OPENAI. platform.openai.com -> своя организация -> проект  lomra-demo  -> ключ проекта в менеджер паролей.
       Billing: предоплата $15–20 (минимум $10), Auto recharge ВЫКЛ. Эта предоплата — жёсткий потолок расходов живого URL
       до 29.09 (прогон gpt-6-sol ~$0.08; суточный предохранитель приложения AGENT_RUNS_PER_DAY=300 — только от злоупотребления).
@@ -222,5 +233,5 @@
   в git-bash "This: command not found"                     -> npm rm -g node (ШАГ 1)
   npm i -g npm@latest: notsup, требует Node >= 22.22.2     -> npm i -g npm@11
   в CLAUDE.md кракозябры "Р РѕР»СЊ"                        -> install.ps1 запускали не через pwsh, повторить
-  /api/health на Vercel: не "db":"turso","db_ok":true      -> vercel env ls production, новый токен Turso (Expiration: Never)
+  /api/health на Vercel: не "db":"turso","db_ok":true      -> vercel env ls production (имена без префикса), новый токен Turso (Expiration: Never)
   живой Run: ошибка про verification / stream              -> верифицировать организацию OpenAI или другой ключ/модель (Б4)
