@@ -120,7 +120,7 @@ $roleWord = if ($Role -eq "emina") { "Эмина, капитан" } else { "Ал
 if ((Test-Path $roleFile) -and ([IO.File]::ReadAllText($roleFile, [Text.Encoding]::UTF8) -match [regex]::Escape($roleWord))) { Ok "роль в Codex: $roleWord" }
 else { Bad "роль «$roleWord» не записана в ~/.codex/AGENTS.md (или кракозябры)" "pwsh -File C:/hack/agent-harness/install.ps1 -Role $Role" }
 $memIndex = "C:\hack\agent-harness\playbooks\hackalem-2026\memory\MEMORY.md"
-if ((Test-Path $roleFile) -and (Test-Path $memIndex) -and ([IO.File]::ReadAllText($roleFile, [Text.Encoding]::UTF8) -match 'memory\\MEMORY\.md')) { Ok "память команды подключена к Codex" }
+if ((Test-Path $roleFile) -and (Test-Path $memIndex) -and ([IO.File]::ReadAllText($roleFile, [Text.Encoding]::UTF8) -match 'memory\\MEMORY\.md') -and ([IO.File]::ReadAllText($roleFile, [Text.Encoding]::UTF8) -match 'Ядро памяти команды Lomra')) { Ok "память команды подключена к Codex (ядро внутри AGENTS.md)" }
 else { Bad "Codex не знает про память команды (нет ссылки на memory\MEMORY.md в ~/.codex/AGENTS.md)" "cd C:\hack\agent-harness; git pull; pwsh -File C:/hack/agent-harness/install.ps1 -Role $Role" }
 
 Section "Скиллы (Codex читает ~/.codex и ~/.agents, Claude — ~/.claude)"

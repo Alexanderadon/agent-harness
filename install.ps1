@@ -82,6 +82,9 @@ $memoryLine
 $memoryLine
 "@
   }
+  # Ядро памяти вписывается в AGENTS.md целиком: в режиме read-only Codex отклоняет любые команды, даже чтение файлов
+  # («blocked by policy», проверено 23.09), а инструкции из AGENTS.md он получает без единой команды.
+  $core = [IO.File]::ReadAllText((Join-Path $ctx "memory\CORE.md"), [Text.Encoding]::UTF8).TrimEnd()
   $marker = "# Роль этого ноутбука на хакатоне"
   foreach ($target in @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md"))) {
     $existing = ""
@@ -90,6 +93,7 @@ $memoryLine
       $existing = ($existing -split [regex]::Escape($marker))[0]
     }
     $new = $existing.TrimEnd() + "`n`n" + $roleText
+    if ($target -like "*AGENTS.md") { $new = $new.TrimEnd() + "`n`n" + $core + "`n" }
     Set-Content -Path $target -Value $new -Encoding UTF8
     Write-Host "role ($Role): $target"
   }
